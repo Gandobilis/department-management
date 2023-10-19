@@ -1,15 +1,15 @@
 package com.example.demo.models;
 
 import javafx.beans.property.SimpleIntegerProperty;
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
-import lombok.Getter;
 
 public class Employee {
     private final SimpleIntegerProperty id;
     private final SimpleStringProperty firstName;
     private final SimpleStringProperty lastName;
-    @Getter
-    private final Department department;
+
+    private final SimpleObjectProperty<Department> department;
 
     public Employee(String fName, String lName) {
         this(-1, fName, lName, null);
@@ -19,7 +19,7 @@ public class Employee {
         this.id = new SimpleIntegerProperty(id);
         this.firstName = new SimpleStringProperty(fName);
         this.lastName = new SimpleStringProperty(lName);
-        this.department = department;
+        this.department = new SimpleObjectProperty<>(department);
     }
 
     public Integer getId() {
@@ -32,5 +32,9 @@ public class Employee {
 
     public String getLastName() {
         return lastName.get();
+    }
+
+    public Department getDepartment() {
+        return department.get();
     }
 }

@@ -40,6 +40,7 @@ public class Employees {
 
         try (Connection connection = DatabaseConnection.getConnection()) {
             String query = "SELECT " +
+                    "e.id, " +
                     "e.first_name, " +
                     "e.last_name, " +
                     "d.name " +

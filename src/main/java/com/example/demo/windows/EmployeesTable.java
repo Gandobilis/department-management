@@ -1,7 +1,9 @@
 package com.example.demo.windows;
 
+import com.example.demo.models.Department;
 import com.example.demo.models.Employee;
 import com.example.demo.tables.Employees;
+import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -40,6 +42,19 @@ public class EmployeesTable {
         lastNameCol.setCellValueFactory(
                 new PropertyValueFactory<>("lastName"));
 
+        TableColumn<Employee, String> departmentNameCol = new TableColumn<>("Department Name");
+        departmentNameCol.setMinWidth(100);
+
+        departmentNameCol.setCellValueFactory(cellData -> {
+            Employee employee = cellData.getValue();
+            Department department = employee.getDepartment();
+            if (department != null) {
+                return new SimpleStringProperty(department.getName());
+            } else {
+                return new SimpleStringProperty("No Department");
+            }
+        });
+
         TableColumn<Employee, Void> deleteCol = new TableColumn<>("Delete");
         deleteCol.setMinWidth(50);
 
@@ -69,7 +84,7 @@ public class EmployeesTable {
         deleteCol.setCellFactory(cellFactory);
 
         table.setItems(data);
-        table.getColumns().addAll(firstNameCol, lastNameCol, deleteCol);
+        table.getColumns().addAll(firstNameCol, lastNameCol, departmentNameCol, deleteCol);
 
         final TextField addFirstName = new TextField();
         addFirstName.setPromptText("First Name");
