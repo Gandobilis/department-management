@@ -15,7 +15,35 @@ import java.sql.SQLException;
 public class Employees implements Model<Employee> {
     @Override
     public Employee findById(Integer id) {
-        return null;
+        Employee employee = null;
+
+        try (Connection connection = DatabaseConnection.getConnection()) {
+            String query = "SELECT " +
+                    "e.id, " +
+                    "e.first_name, " +
+                    "e.last_name, " +
+                    "d.name " +
+                    "FROM employees e " +
+                    "JOIN departments d ON e.department_id = d.id " +
+                    "WHERE e.id = ?";
+            try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+                preparedStatement.setInt(1, id);
+                try (ResultSet resultSet = preparedStatement.executeQuery()) {
+                    if (resultSet.next()) {
+                        Integer employeeId = resultSet.getInt("id");
+                        String firstName = resultSet.getString("first_name");
+                        String lastName = resultSet.getString("last_name");
+                        String departmentName = resultSet.getString("name");
+                        Department department = new Department(departmentName);
+                        employee = new Employee(employeeId, firstName, lastName, department);
+                    }
+                }
+            }
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+
+        return employee;
     }
 
     @Override
