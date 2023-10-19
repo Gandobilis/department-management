@@ -3,6 +3,7 @@ package com.example.demo.tables;
 import com.example.demo.database.DatabaseConnection;
 import com.example.demo.models.Department;
 import com.example.demo.models.Employee;
+import com.example.demo.models.Model;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
@@ -11,31 +12,14 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-public class Employees {
-    public static void create(Employee employee, Integer departmentId) {
-        try (Connection connection = DatabaseConnection.getConnection()) {
-            String query = "INSERT INTO employees (first_name, " +
-                    "last_name, " +
-                    "department_id) " +
-                    "VALUES (?, ?, ?)";
-            try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
-                preparedStatement.setString(1, employee.getFirstName());
-                preparedStatement.setString(2, employee.getLastName());
-                preparedStatement.setInt(3, departmentId);
-                int affectedRows = preparedStatement.executeUpdate();
-                if (affectedRows > 0) {
-                    System.out.println("Employee added successfully.");
-                    read();
-                } else {
-                    System.out.println("Failed to add the employee.");
-                }
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+public class Employees implements Model<Employee> {
+    @Override
+    public Employee findById(Integer id) {
+        return null;
     }
 
-    public static ObservableList<Employee> read() {
+    @Override
+    public ObservableList<Employee> findAll() {
         ObservableList<Employee> employees = FXCollections.observableArrayList();
 
         try (Connection connection = DatabaseConnection.getConnection()) {
@@ -58,13 +42,37 @@ public class Employees {
                 }
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            System.out.println(e.getMessage());
         }
 
         return employees;
     }
 
-    public static void update(Employee employee) {
+    @Override
+    public void create(Employee employee) {
+        try (Connection connection = DatabaseConnection.getConnection()) {
+            String query = "INSERT INTO employees (first_name, " +
+                    "last_name, " +
+                    "department_id) " +
+                    "VALUES (?, ?, ?)";
+            try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+                preparedStatement.setString(1, employee.getFirstName());
+                preparedStatement.setString(2, employee.getLastName());
+                preparedStatement.setInt(3, employee.getDepartment().getId());
+                int affectedRows = preparedStatement.executeUpdate();
+                if (affectedRows > 0) {
+                    System.out.println("Employee added successfully.");
+                } else {
+                    System.out.println("Failed to add the employee.");
+                }
+            }
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
+    @Override
+    public void update(Employee employee) {
         try (Connection connection = DatabaseConnection.getConnection()) {
             String query = "UPDATE employees " +
                     "SET first_name = ?, " +
@@ -77,17 +85,17 @@ public class Employees {
                 int affectedRows = preparedStatement.executeUpdate();
                 if (affectedRows > 0) {
                     System.out.println("Employee information updated successfully.");
-                    read();
                 } else {
                     System.out.println("No employee found with the specified ID. No update performed.");
                 }
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            System.out.println(e.getMessage());
         }
     }
 
-    public static void delete(Integer id) {
+    @Override
+    public void delete(Integer id) {
         try (Connection connection = DatabaseConnection.getConnection()) {
             String query = "DELETE FROM employees " +
                     "WHERE id = ?";
@@ -96,17 +104,12 @@ public class Employees {
                 int affectedRows = preparedStatement.executeUpdate();
                 if (affectedRows > 0) {
                     System.out.println("Employee with ID " + id + " deleted successfully.");
-                    read();
                 } else {
                     System.out.println("No employee found with ID " + id + ". No deletion performed.");
                 }
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            System.out.println(e.getMessage());
         }
-    }
-
-    public static void loadDepartment() {
-
     }
 }

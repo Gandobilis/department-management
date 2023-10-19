@@ -20,10 +20,10 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.util.Callback;
 
-public class EmployeesTable {
-
+public class EmployeesWindow {
+    private final Employees employees = new Employees();
     private final TableView<Employee> table = new TableView<>();
-    private ObservableList<Employee> data = Employees.read();
+    private ObservableList<Employee> data = employees.read();
     final HBox hb = new HBox();
 
     public Scene getScene() {
@@ -64,8 +64,8 @@ public class EmployeesTable {
             {
                 deleteButton.setOnAction(event -> {
                     Employee employee = getTableView().getItems().get(getIndex());
-                    Employees.delete(employee.getId());
-                    data = Employees.read();
+                    employees.delete(employee.getId());
+                    data = employees.read();
                     table.setItems(data);
                     table.refresh();
                 });
@@ -99,8 +99,8 @@ public class EmployeesTable {
                     addFirstName.getText(),
                     addLastName.getText()
             );
-            Employees.create(employee, 1);
-            data = Employees.read();
+            employees.create(employee, 1);
+            data = employees.read();
             table.setItems(data);
             table.refresh();
 

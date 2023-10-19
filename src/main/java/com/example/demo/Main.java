@@ -1,6 +1,6 @@
 package com.example.demo;
 
-import com.example.demo.windows.EmployeesTable;
+import com.example.demo.windows.EmployeesWindow;
 import javafx.application.Application;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -25,7 +25,7 @@ public class Main extends Application {
 //        });
         Button button1 = new Button("Employees");
         button1.setOnAction((e) -> {
-            stage.setScene(new EmployeesTable().getScene());
+            stage.setScene(new EmployeesWindow().getScene());
             stage.setMaximized(true);
         });
 
