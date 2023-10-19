@@ -2,27 +2,27 @@ package com.example.demo.models;
 
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleStringProperty;
+import lombok.Getter;
 
 public class Employee {
     private final SimpleIntegerProperty id;
     private final SimpleStringProperty firstName;
     private final SimpleStringProperty lastName;
-    private Department department;
+    @Getter
+    private final Department department;
 
     public Employee(String fName, String lName) {
-        this(-1, fName, lName);
+        this(-1, fName, lName, null);
     }
 
-    public Employee(Integer id, String fName, String lName) {
+    public Employee(Integer id, String fName, String lName, Department department) {
         this.id = new SimpleIntegerProperty(id);
         this.firstName = new SimpleStringProperty(fName);
         this.lastName = new SimpleStringProperty(lName);
+        this.department = department;
     }
 
-    public
-
     public Integer getId() {
-        assert id != null;
         return id.get();
     }
 
@@ -30,15 +30,7 @@ public class Employee {
         return firstName.get();
     }
 
-    public void setFirstName(String fName) {
-        firstName.set(fName);
-    }
-
     public String getLastName() {
         return lastName.get();
-    }
-
-    public void setLastName(String fName) {
-        lastName.set(fName);
     }
 }

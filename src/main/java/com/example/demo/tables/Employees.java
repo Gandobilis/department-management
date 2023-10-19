@@ -1,6 +1,7 @@
 package com.example.demo.tables;
 
 import com.example.demo.database.DatabaseConnection;
+import com.example.demo.models.Department;
 import com.example.demo.models.Employee;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -50,7 +51,8 @@ public class Employees {
                         Integer id = resultSet.getInt("id");
                         String firstName = resultSet.getString("first_name");
                         String lastName = resultSet.getString("last_name");
-                        employees.add(new Employee(id, firstName, lastName));
+                        String name = resultSet.getString("name");
+                        employees.add(new Employee(id, firstName, lastName, new Department(name)));
                     }
                 }
             }
