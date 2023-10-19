@@ -110,6 +110,7 @@ public class EmployeesWindow {
 
             addFirstName.clear();
             addLastName.clear();
+            addDepartmentName.clear();
         });
 
         hb.getChildren().addAll(addFirstName, addLastName, addDepartmentName, addButton);
