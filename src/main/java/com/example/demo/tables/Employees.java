@@ -13,6 +13,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 public class Employees implements Model<Employee> {
+    private static final Departments departments = new Departments();
+
     @Override
     public Employee findById(Integer id) {
         Employee employee = null;
@@ -78,6 +80,10 @@ public class Employees implements Model<Employee> {
 
     @Override
     public void create(Employee employee) {
+        if (departments.findByName(employee.getDepartment().getName()) == null) {
+            departments.create(employee.getDepartment());
+            employee.getDepartment().setId(departments.findByName(employee.getDepartment().getName()).getId());
+        }
         try (Connection connection = DatabaseConnection.getConnection()) {
             String query = "INSERT INTO employees (first_name, " +
                     "last_name, " +

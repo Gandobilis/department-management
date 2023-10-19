@@ -17,8 +17,11 @@ public class Department {
     }
 
     public Integer getId() {
-        assert id != null;
         return id.get();
+    }
+
+    public void setId(int id) {
+        this.id.set(id);
     }
 
     public String getName() {
