@@ -7,6 +7,11 @@ public class Employee {
     private final SimpleIntegerProperty id;
     private final SimpleStringProperty firstName;
     private final SimpleStringProperty lastName;
+    private Department department;
+
+    public Employee(String fName, String lName) {
+        this(-1, fName, lName);
+    }
 
     public Employee(Integer id, String fName, String lName) {
         this.id = new SimpleIntegerProperty(id);
@@ -14,7 +19,10 @@ public class Employee {
         this.lastName = new SimpleStringProperty(lName);
     }
 
+    public
+
     public Integer getId() {
+        assert id != null;
         return id.get();
     }
 

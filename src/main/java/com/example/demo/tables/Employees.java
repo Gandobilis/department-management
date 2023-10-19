@@ -2,20 +2,21 @@ package com.example.demo.tables;
 
 import com.example.demo.database.DatabaseConnection;
 import com.example.demo.models.Employee;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
 
 public class Employees {
-    private static List<Employee> data;
-
     public static void create(Employee employee, Integer departmentId) {
         try (Connection connection = DatabaseConnection.getConnection()) {
-            String query = "INSERT INTO employees (first_name, last_name, department_id) VALUES (?, ?, ?)";
+            String query = "INSERT INTO employees (first_name, " +
+                    "last_name, " +
+                    "department_id) " +
+                    "VALUES (?, ?, ?)";
             try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
                 preparedStatement.setString(1, employee.getFirstName());
                 preparedStatement.setString(2, employee.getLastName());
@@ -29,15 +30,20 @@ public class Employees {
                 }
             }
         } catch (SQLException e) {
-            System.out.println("Failed to add the employee.");
+            e.printStackTrace();
         }
     }
 
-    public static List<Employee> read() {
-        List<Employee> employees = new ArrayList<>();
+    public static ObservableList<Employee> read() {
+        ObservableList<Employee> employees = FXCollections.observableArrayList();
 
         try (Connection connection = DatabaseConnection.getConnection()) {
-            String query = "SELECT id, first_name, last_name FROM employees";
+            String query = "SELECT " +
+                    "e.first_name, " +
+                    "e.last_name, " +
+                    "d.name " +
+                    "FROM employees e join departments d " +
+                    "on e.department_id = d.id";
             try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
                 try (ResultSet resultSet = preparedStatement.executeQuery()) {
                     while (resultSet.next()) {
@@ -49,7 +55,7 @@ public class Employees {
                 }
             }
         } catch (SQLException e) {
-            System.out.println("Failed to read employees employees.");
+            e.printStackTrace();
         }
 
         return employees;
@@ -57,7 +63,10 @@ public class Employees {
 
     public static void update(Employee employee) {
         try (Connection connection = DatabaseConnection.getConnection()) {
-            String query = "UPDATE employees SET first_name = ?, last_name = ? WHERE id = ?";
+            String query = "UPDATE employees " +
+                    "SET first_name = ?, " +
+                    "last_name = ? " +
+                    "WHERE id = ?";
             try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
                 preparedStatement.setString(1, employee.getFirstName());
                 preparedStatement.setString(2, employee.getLastName());
@@ -71,13 +80,14 @@ public class Employees {
                 }
             }
         } catch (SQLException e) {
-            System.out.println("Failed to update employee with id " + employee.getId());
+            e.printStackTrace();
         }
     }
 
     public static void delete(Integer id) {
         try (Connection connection = DatabaseConnection.getConnection()) {
-            String query = "DELETE FROM employees WHERE id = ?";
+            String query = "DELETE FROM employees " +
+                    "WHERE id = ?";
             try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
                 preparedStatement.setInt(1, id);
                 int affectedRows = preparedStatement.executeUpdate();
@@ -89,14 +99,11 @@ public class Employees {
                 }
             }
         } catch (SQLException e) {
-            System.out.println("Failed to delete employee with id " + id);
+            e.printStackTrace();
         }
     }
 
-    public static List<Employee> getData() {
-        if (data == null) {
-            data = read();
-        }
-        return data;
+    public static void loadDepartment() {
+
     }
 }
