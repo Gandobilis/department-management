@@ -15,6 +15,10 @@ public class Employee {
         this(-1, fName, lName, null);
     }
 
+    public Employee(String fName, String lName, Department department) {
+        this(-1, fName, lName, department);
+    }
+
     public Employee(Integer id, String fName, String lName, Department department) {
         this.id = new SimpleIntegerProperty(id);
         this.firstName = new SimpleStringProperty(fName);

@@ -23,7 +23,7 @@ import javafx.util.Callback;
 public class EmployeesWindow {
     private final Employees employees = new Employees();
     private final TableView<Employee> table = new TableView<>();
-    private ObservableList<Employee> data = employees.read();
+    private ObservableList<Employee> data = employees.findAll();
     final HBox hb = new HBox();
 
     public Scene getScene() {
@@ -65,7 +65,7 @@ public class EmployeesWindow {
                 deleteButton.setOnAction(event -> {
                     Employee employee = getTableView().getItems().get(getIndex());
                     employees.delete(employee.getId());
-                    data = employees.read();
+                    data = employees.findAll();
                     table.setItems(data);
                     table.refresh();
                 });
@@ -92,15 +92,19 @@ public class EmployeesWindow {
         final TextField addLastName = new TextField();
         addLastName.setMaxWidth(lastNameCol.getPrefWidth());
         addLastName.setPromptText("Last Name");
+        final TextField addDepartmentName = new TextField();
+        addDepartmentName.setMaxWidth(addDepartmentName.getPrefWidth());
+        addDepartmentName.setPromptText("Department Name");
 
         final Button addButton = new Button("Add");
         addButton.setOnAction(e -> {
             Employee employee = new Employee(
                     addFirstName.getText(),
-                    addLastName.getText()
+                    addLastName.getText(),
+                    new Department(addDepartmentName.getText())
             );
-            employees.create(employee, 1);
-            data = employees.read();
+            employees.create(employee);
+            data = employees.findAll();
             table.setItems(data);
             table.refresh();
 
@@ -108,7 +112,7 @@ public class EmployeesWindow {
             addLastName.clear();
         });
 
-        hb.getChildren().addAll(addFirstName, addLastName, addButton);
+        hb.getChildren().addAll(addFirstName, addLastName, addDepartmentName, addButton);
         hb.setSpacing(3);
 
         final VBox vbox = new VBox();
