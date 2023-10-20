@@ -21,7 +21,7 @@ import javafx.scene.layout.VBox;
 import javafx.util.Callback;
 
 public class EmployeesWindow {
-    private final Employees employees = new Employees();
+    private final Employees employees = Employees.getInstance();
     private final TableView<Employee> table = new TableView<>();
     private ObservableList<Employee> data = employees.findAll();
     final HBox hb = new HBox();

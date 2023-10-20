@@ -20,7 +20,7 @@ import javafx.scene.layout.VBox;
 import javafx.util.Callback;
 
 public class DepartmentsWindow {
-    private final Departments departments = new Departments();
+    private final Departments departments = Departments.getInstance();
     private final TableView<Department> table = new TableView<>();
     private ObservableList<Department> data = departments.findAll();
     final HBox hb = new HBox();

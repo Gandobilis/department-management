@@ -13,7 +13,19 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 public class Employees implements Model<Employee> {
-    private static final Departments departments = new Departments();
+    private static final Departments departments = Departments.getInstance();
+
+    private static Employees instance;
+
+    public static Employees getInstance() {
+        if (instance == null) {
+            instance = new Employees();
+        }
+        return instance;
+    }
+
+    private Employees() {
+    }
 
     @Override
     public Employee findById(Integer id) {

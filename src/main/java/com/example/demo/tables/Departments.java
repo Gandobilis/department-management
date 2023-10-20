@@ -12,6 +12,18 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 public class Departments implements Model<Department> {
+    private static Departments instance;
+
+    public static Departments getInstance() {
+        if (instance == null) {
+            instance = new Departments();
+        }
+        return instance;
+    }
+
+    private Departments() {
+    }
+
     @Override
     public Department findById(Integer id) {
         Department department = null;
