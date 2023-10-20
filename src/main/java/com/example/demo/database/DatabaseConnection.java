@@ -29,15 +29,4 @@ public class DatabaseConnection {
             System.err.println("Failed to connect to the database.");
         }
     }
-
-    public static void closeConnection() {
-        if (connection != null) {
-            try {
-                connection.close();
-                System.out.println("Closed the database connection.");
-            } catch (SQLException e) {
-                System.err.println("Failed to close the database connection.");
-            }
-        }
-    }
 }
