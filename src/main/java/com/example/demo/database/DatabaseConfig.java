@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.util.Properties;
 
 public class DatabaseConfig {
+    private static final String CONFIG_FILE_PATH = "src/main/java/com/example/demo/config/database.properties";
     @Getter
     private static final Properties properties;
 
@@ -14,9 +15,9 @@ public class DatabaseConfig {
         properties = loadProperties();
     }
 
-    public static Properties loadProperties() {
+    private static Properties loadProperties() {
         Properties props = new Properties();
-        try (FileInputStream input = new FileInputStream("src/main/java/com/example/demo/config/database.properties")) {
+        try (FileInputStream input = new FileInputStream(CONFIG_FILE_PATH)) {
             props.load(input);
         } catch (IOException e) {
             System.out.println("Filed to load database properties.");

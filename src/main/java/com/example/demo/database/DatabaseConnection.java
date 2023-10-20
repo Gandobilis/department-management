@@ -16,7 +16,7 @@ public class DatabaseConnection {
     }
 
     private static void initializeConnection() {
-        Properties properties = DatabaseConfig.loadProperties();
+        Properties properties = DatabaseConfig.getProperties();
 
         String dbUrl = properties.getProperty("db.url");
         String dbUsername = properties.getProperty("db.username");
