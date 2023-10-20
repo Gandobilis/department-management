@@ -40,13 +40,16 @@ public class Departments implements Model<Department> {
         ObservableList<Department> departments = FXCollections.observableArrayList();
 
         try (Connection connection = DatabaseConnection.getConnection()) {
-            String query = "SELECT id, name FROM departments";
+            String query = "SELECT d.id, d.name, d1.name as parentName FROM departments d left join departments d1 on d.id = d1.parent_department_id";
             try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
                 try (ResultSet resultSet = preparedStatement.executeQuery()) {
                     while (resultSet.next()) {
                         Integer id = resultSet.getInt("id");
                         String name = resultSet.getString("name");
-                        departments.add(new Department(id, name));
+                        String parentName = resultSet.getString("parentName");
+                        departments.add(new Department(id, name,
+                                parentName != null ? new Department(parentName) : null
+                        ));
                     }
                 }
             }

@@ -1,5 +1,6 @@
 package com.example.demo;
 
+import com.example.demo.windows.DepartmentsWindow;
 import com.example.demo.windows.EmployeesWindow;
 import javafx.application.Application;
 import javafx.geometry.Pos;
@@ -19,19 +20,19 @@ public class Main extends Application {
         stage.setTitle("Department Management App");
 
         HBox hBox = new HBox();
-//        Button button = new Button("Departments");
-//        button.setOnAction((e) -> {
-//            stage.setScene(new DepartmentsTable().start());
-//        });
-        Button button1 = new Button("Employees");
-        button1.setOnAction((e) -> {
+        Button departmentsButton = new Button("Departments");
+        departmentsButton.setOnAction((e) -> {
+            stage.setScene(new DepartmentsWindow().getScene());
+        });
+        Button employeesButton = new Button("Employees");
+        employeesButton.setOnAction((e) -> {
             stage.setScene(new EmployeesWindow().getScene());
             stage.setMaximized(true);
         });
 
         hBox.getChildren().addAll(
-                // button
-                button1
+                departmentsButton,
+                employeesButton
         );
 
         hBox.setAlignment(Pos.CENTER);
