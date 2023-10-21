@@ -65,10 +65,10 @@ public class Employees implements Table {
         column.setCellFactory(cellFactory);
         column.setOnEditCommit(t -> {
             Employee empl = t.getTableView().getItems().get(t.getTablePosition().getRow());
-            if (t.getTableColumn().cellValueFactoryProperty().getName().equals("firstName")) {
+            if (t.getTableColumn().getText().equals("First Name")) {
                 empl.setFirstName(t.getNewValue());
             }
-            if (t.getTableColumn().cellValueFactoryProperty().getName().equals("lastName")) {
+            if (t.getTableColumn().getText().equals("Last Name")) {
                 empl.setLastName(t.getNewValue());
             }
             employees.update(empl);
