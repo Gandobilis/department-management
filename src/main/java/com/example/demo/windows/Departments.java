@@ -53,7 +53,8 @@ public class Departments implements Table {
         HBox deptForm = new HBox();
         TextField deptName = createTextField("Name", name.getPrefWidth());
         ChoiceBox<Department> parentDeptName = new ChoiceBox<>(depts.findAll());
-        parentDeptName.getSelectionModel().selectFirst();
+        parentDeptName.getItems().add(new Department("No Parent"));
+        parentDeptName.getSelectionModel().selectLast();
         parentDeptName.setTooltip(new Tooltip("Select the department"));
         Button addDept = createDepartmentAddButton(deptName, parentDeptName);
 
