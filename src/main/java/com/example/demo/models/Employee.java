@@ -30,6 +30,14 @@ public class Employee {
         return id.get();
     }
 
+    public void setFirstName(String firstName) {
+        this.firstName.set(firstName);
+    }
+
+    public void setLastName(String lastName) {
+        this.lastName.set(lastName);
+    }
+
     public String getFirstName() {
         return firstName.get();
     }

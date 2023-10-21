@@ -31,10 +31,6 @@ public class Department {
         return id.get();
     }
 
-    public void setId(int id) {
-        this.id.set(id);
-    }
-
     public String getName() {
         return name.get();
     }
