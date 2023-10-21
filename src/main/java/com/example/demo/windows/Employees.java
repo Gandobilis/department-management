@@ -43,15 +43,7 @@ public class Employees {
         table.setItems(data);
         table.getColumns().addAll(firstNameCol, lastNameCol, departmentNameCol, deleteCol);
 
-        final TextField addFirstName = createTextField("First Name", firstNameCol.getPrefWidth());
-        final TextField addLastName = createTextField("Last Name", lastNameCol.getPrefWidth());
-        final TextField addDepartmentName = createTextField("Department Name", departmentNameCol.getPrefWidth());
-        final Button addButton = createAddButton(addFirstName, addLastName, addDepartmentName);
-
-        hBox.getChildren().addAll(addFirstName, addLastName, addDepartmentName, addButton);
-        hBox.setSpacing(3);
-
-        final VBox vbox = new VBox(label, table, hBox);
+        final VBox vbox = new VBox(home, label, table, hBox);
         vbox.setAlignment(Pos.CENTER);
         vbox.setSpacing(5);
         vbox.setPadding(new Insets(10, 0, 0, 10));
@@ -103,28 +95,5 @@ public class Employees {
         Button home = new Button("Home");
         home.setOnAction(e -> Main.setDefaultScene());
         return home;
-    }
-
-    private TextField createTextField(String prompt, double width) {
-        TextField textField = new TextField();
-        textField.setPromptText(prompt);
-        textField.setMaxWidth(width);
-        return textField;
-    }
-
-    private Button createAddButton(TextField firstName, TextField lastName, TextField departmentName) {
-        Button addButton = new Button("Add");
-        addButton.setOnAction(e -> {
-            Employee employee = new Employee(firstName.getText(), lastName.getText(), new Department(departmentName.getText()));
-            employees.create(employee);
-            data = employees.findAll();
-            table.setItems(data);
-            table.refresh();
-
-            firstName.clear();
-            lastName.clear();
-            departmentName.clear();
-        });
-        return addButton;
     }
 }

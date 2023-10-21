@@ -11,49 +11,45 @@ import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 
 public class Main extends Application {
-    private static Scene scene;
     private static Stage stage;
-
-    @Override
-    public void start(Stage window) {
-        stage = window;
-
-        window.setTitle("Department Management");
-
-        HBox hBox = new HBox();
-
-        Button showDepartmentsButton = new Button("Departments");
-        showDepartmentsButton.setOnAction((e) -> {
-            window.setTitle("Departments");
-            window.setScene(new Departments().getScene());
-        });
-
-        Button showEmployeesButton = new Button("Employees");
-        showEmployeesButton.setOnAction((e) -> {
-            window.setTitle("Employees");
-            window.setScene(new Employees().getScene());
-        });
-
-        hBox.getChildren().addAll(
-                showDepartmentsButton,
-                showEmployeesButton
-        );
-
-        hBox.setAlignment(Pos.CENTER);
-
-        StackPane layout = new StackPane();
-        layout.getChildren().add(hBox);
-
-        scene = new Scene(layout, 500, 500);
-        window.setScene(scene);
-        window.show();
-    }
-
-    public static void setDefaultScene() {
-        stage.setScene(scene);
-    }
+    private static final String DEFAULT_TITLE = "Department Management";
+    private static Scene DEFAULT_SCENE;
 
     public static void main(String[] args) {
         launch(args);
     }
+
+    @Override
+    public void start(Stage primaryStage) {
+        stage = primaryStage;
+        stage.setTitle(DEFAULT_TITLE);
+
+        HBox hBox = new HBox(
+                showButton("Departments", new Departments().getScene(), "Departments Table"),
+                showButton("Employees", new Employees().getScene(), "Employees Table")
+        );
+        hBox.setSpacing(3);
+
+        hBox.setAlignment(Pos.CENTER);
+
+        StackPane layout = new StackPane(hBox);
+        DEFAULT_SCENE = new Scene(layout, 1280, 720);
+        stage.setScene(DEFAULT_SCENE);
+        stage.show();
+    }
+
+    private Button showButton(String buttonText, Scene newScene, String newTitle) {
+        Button button = new Button(buttonText);
+        button.setOnAction((e) -> {
+            stage.setTitle(newTitle);
+            stage.setScene(newScene);
+        });
+        return button;
+    }
+
+    public static void setDefaultScene() {
+        stage.setTitle(DEFAULT_TITLE);
+        stage.setScene(DEFAULT_SCENE);
+    }
 }
+

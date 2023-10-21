@@ -2,7 +2,9 @@ package com.example.demo.windows;
 
 import com.example.demo.Main;
 import com.example.demo.models.Department;
+import com.example.demo.models.Employee;
 import com.example.demo.tables.TDepartments;
+import com.example.demo.tables.TEmployees;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -18,55 +20,70 @@ import javafx.scene.layout.VBox;
 import javafx.util.Callback;
 
 public class Departments {
+    private final TEmployees employees = TEmployees.getInstance();
     private final TDepartments departments = TDepartments.getInstance();
-    private final TableView<Department> table = new TableView<>();
-    private ObservableList<Department> data = departments.findAll();
-    final HBox hBox = new HBox();
+    private final TableView<Department> departmentsTable = new TableView<>();
+    private ObservableList<Department> departmentsData = departments.findAll();
 
     public Scene getScene() {
-        StackPane stackPane = new StackPane();
-        Scene scene = new Scene(stackPane, 500, 500);
+        StackPane departmentsLayout = new StackPane();
+        Scene scene = new Scene(departmentsLayout, 500, 600);
 
-        final Button home = createHomeButton();
+        Button homeButton = createHomeButton();
 
-        final Label label = new Label("Departments");
+        Label departmentsLabel = new Label("Departments");
 
-        table.setEditable(true);
+        departmentsTable.setEditable(true);
 
-        TableColumn<Department, String> nameCol = createTableColumn("Name", "name", 100);
-        TableColumn<Department, String> parentDepartmentCol = createTableColumn("Department Name", null, 200);
+        TableColumn<Department, String> departmentNameCol = createTableColumn("Department Name", "name", 100);
+        TableColumn<Department, String> parentDepartmentNameCol = createTableColumn("Parent Department Name", null, 250);
 
-        parentDepartmentCol.setCellValueFactory(cellData -> {
+        parentDepartmentNameCol.setCellValueFactory(cellData -> {
             Department department = cellData.getValue();
             Department parentDepartment = department.getParentDepartment();
             return new SimpleStringProperty(parentDepartment != null ? parentDepartment.getName() : "No Parent Department");
         });
 
-        TableColumn<Department, Void> deleteCol = createDeleteColumn();
+        TableColumn<Department, Void> deleteDepartmentCol = createDeleteColumn();
 
-        table.setItems(data);
-        table.getColumns().addAll(nameCol, parentDepartmentCol, deleteCol);
+        departmentsTable.setItems(departmentsData);
+        departmentsTable.getColumns().addAll(departmentNameCol, parentDepartmentNameCol, deleteDepartmentCol);
 
-        final TextField addName = createTextField("Name", nameCol.getPrefWidth());
-        final Button addButton = createAddButton(addName);
+        VBox vBox = new VBox();
 
-        hBox.getChildren().addAll(addName, addButton);
+        HBox hBox = new HBox();
+        TextField addDepartmentName = createTextField("Name", departmentNameCol.getPrefWidth());
+        Button addDepartmentButton = createDepartmentAddButton(addDepartmentName);
+
+        hBox.getChildren().addAll(addDepartmentName, addDepartmentButton);
         hBox.setSpacing(3);
 
-        final VBox vbox = new VBox(home, label, table, hBox);
+        HBox hBox1 = new HBox();
+        TextField addFirstName = createTextField("First Name", departmentNameCol.getPrefWidth());
+        TextField addLastName = createTextField("Last Name", departmentNameCol.getPrefWidth());
+        TextField addEmployeeDepartmentName = createTextField("Department Name", departmentNameCol.getPrefWidth());
+        Button addEmployeeButton = createEmployeeAddButton(addFirstName, addLastName, addEmployeeDepartmentName);
+
+        hBox1.getChildren().addAll(addFirstName, addLastName, addEmployeeDepartmentName, addEmployeeButton);
+        hBox1.setSpacing(3);
+
+        vBox.getChildren().addAll(hBox, hBox1);
+        vBox.setSpacing(5);
+
+        VBox vbox = new VBox(homeButton, departmentsLabel, departmentsTable, vBox);
         vbox.setAlignment(Pos.CENTER);
         vbox.setSpacing(5);
         vbox.setPadding(new Insets(10, 0, 0, 10));
 
-        stackPane.getChildren().add(vbox);
+        departmentsLayout.getChildren().add(vbox);
 
         return scene;
     }
 
     private Button createHomeButton() {
-        Button home = new Button("Home");
-        home.setOnAction(e -> Main.setDefaultScene());
-        return home;
+        Button homeButton = new Button("Home");
+        homeButton.setOnAction(e -> Main.setDefaultScene());
+        return homeButton;
     }
 
     private TableColumn<Department, String> createTableColumn(String text, String property, double width) {
@@ -80,16 +97,16 @@ public class Departments {
             Department department = t.getTableView().getItems().get(t.getTablePosition().getRow());
             department.setName(t.getNewValue());
             departments.update(department);
-            data = departments.findAll();
-            table.setItems(data);
-            table.refresh();
+            departmentsData = departments.findAll();
+            departmentsTable.setItems(departmentsData);
+            departmentsTable.refresh();
         });
         return column;
     }
 
     private TableColumn<Department, Void> createDeleteColumn() {
-        TableColumn<Department, Void> deleteCol = new TableColumn<>("Delete");
-        deleteCol.setMinWidth(50);
+        TableColumn<Department, Void> deleteDepartmentCol = new TableColumn<>("Delete");
+        deleteDepartmentCol.setMinWidth(50);
 
         Callback<TableColumn<Department, Void>, TableCell<Department, Void>> cellFactory = param -> new TableCell<>() {
             private final Button deleteButton = new Button("Delete");
@@ -98,9 +115,9 @@ public class Departments {
                 deleteButton.setOnAction(event -> {
                     Department department = getTableView().getItems().get(getIndex());
                     departments.delete(department.getId());
-                    data = departments.findAll();
-                    table.setItems(data);
-                    table.refresh();
+                    departmentsData = departments.findAll();
+                    departmentsTable.setItems(departmentsData);
+                    departmentsTable.refresh();
                 });
             }
 
@@ -114,9 +131,9 @@ public class Departments {
                 }
             }
         };
-        deleteCol.setCellFactory(cellFactory);
+        deleteDepartmentCol.setCellFactory(cellFactory);
 
-        return deleteCol;
+        return deleteDepartmentCol;
     }
 
     private TextField createTextField(String prompt, double width) {
@@ -126,17 +143,33 @@ public class Departments {
         return textField;
     }
 
-    private Button createAddButton(TextField nameField) {
-        Button addButton = new Button("Add");
+    private Button createEmployeeAddButton(TextField firstName, TextField lastName, TextField departmentName) {
+        Button addButton = new Button("Add Employee");
         addButton.setOnAction(e -> {
-            Department department = new Department(nameField.getText());
-            departments.create(department);
-            data = departments.findAll();
-            table.setItems(data);
-            table.refresh();
-            nameField.clear();
+            Employee employee = new Employee(firstName.getText(), lastName.getText(), new Department(departmentName.getText()));
+            employees.create(employee);
+            departmentsData = departments.findAll();
+            departmentsTable.setItems(departmentsData);
+            departmentsTable.refresh();
+
+            firstName.clear();
+            lastName.clear();
+            departmentName.clear();
         });
         return addButton;
+    }
+
+    private Button createDepartmentAddButton(TextField nameField) {
+        Button addDepartmentButton = new Button("Add Department");
+        addDepartmentButton.setOnAction(e -> {
+            Department department = new Department(nameField.getText());
+            departments.create(department);
+            departmentsData = departments.findAll();
+            departmentsTable.setItems(departmentsData);
+            departmentsTable.refresh();
+            nameField.clear();
+        });
+        return addDepartmentButton;
     }
 
     static class EditingCell extends TableCell<Department, String> {
@@ -201,7 +234,7 @@ public class Departments {
         }
 
         private String getString() {
-            return getItem() == null ? "" : getItem().toString();
+            return getItem() == null ? "" : getItem();
         }
     }
 }
