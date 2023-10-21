@@ -1,5 +1,6 @@
 package com.example.demo.windows;
 
+import com.example.demo.Main;
 import com.example.demo.models.Department;
 import com.example.demo.models.Employee;
 import com.example.demo.tables.TEmployees;
@@ -22,6 +23,8 @@ public class Employees {
     public Scene getScene() {
         StackPane layout = new StackPane();
         Scene scene = new Scene(layout, 500, 500);
+
+        final Button home = createHomeButton();
 
         final Label label = new Label("Employees");
 
@@ -94,6 +97,12 @@ public class Employees {
         deleteCol.setCellFactory(cellFactory);
 
         return deleteCol;
+    }
+
+    private Button createHomeButton() {
+        Button home = new Button("Home");
+        home.setOnAction(e -> Main.setDefaultScene());
+        return home;
     }
 
     private TextField createTextField(String prompt, double width) {
