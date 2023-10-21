@@ -17,17 +17,17 @@ public class Employees {
     private final TEmployees employees = TEmployees.getInstance();
     private final TableView<Employee> table = new TableView<>();
     private ObservableList<Employee> data = employees.findAll();
-    final HBox hb = new HBox();
+    final HBox hBox = new HBox();
 
     public Scene getScene() {
-        StackPane stackPane = new StackPane();
-        Scene scene = new Scene(stackPane, 500, 500);
+        StackPane layout = new StackPane();
+        Scene scene = new Scene(layout, 500, 500);
 
         final Label label = new Label("Employees");
 
-        TableColumn<Employee, String> firstNameCol = createTableColumn("First Name", "firstName");
-        TableColumn<Employee, String> lastNameCol = createTableColumn("Last Name", "lastName");
-        TableColumn<Employee, String> departmentNameCol = createTableColumn("Department Name", null);
+        TableColumn<Employee, String> firstNameCol = createTableColumn("First Name", "firstName", 100);
+        TableColumn<Employee, String> lastNameCol = createTableColumn("Last Name", "lastName", 100);
+        TableColumn<Employee, String> departmentNameCol = createTableColumn("Department Name", null, 200);
 
         departmentNameCol.setCellValueFactory(cellData -> {
             Employee employee = cellData.getValue();
@@ -45,21 +45,21 @@ public class Employees {
         final TextField addDepartmentName = createTextField("Department Name", departmentNameCol.getPrefWidth());
         final Button addButton = createAddButton(addFirstName, addLastName, addDepartmentName);
 
-        hb.getChildren().addAll(addFirstName, addLastName, addDepartmentName, addButton);
-        hb.setSpacing(3);
+        hBox.getChildren().addAll(addFirstName, addLastName, addDepartmentName, addButton);
+        hBox.setSpacing(3);
 
-        final VBox vbox = new VBox(label, table, hb);
+        final VBox vbox = new VBox(label, table, hBox);
         vbox.setAlignment(Pos.CENTER);
         vbox.setSpacing(5);
         vbox.setPadding(new Insets(10, 0, 0, 10));
 
-        stackPane.getChildren().add(vbox);
+        layout.getChildren().add(vbox);
         return scene;
     }
 
-    private TableColumn<Employee, String> createTableColumn(String text, String property) {
+    private TableColumn<Employee, String> createTableColumn(String text, String property, Integer width) {
         TableColumn<Employee, String> column = new TableColumn<>(text);
-        column.setMinWidth(100);
+        column.setMinWidth(width);
         column.setCellValueFactory(new PropertyValueFactory<>(property));
         return column;
     }

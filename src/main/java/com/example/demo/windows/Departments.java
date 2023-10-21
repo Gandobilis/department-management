@@ -1,5 +1,6 @@
 package com.example.demo.windows;
 
+import com.example.demo.Main;
 import com.example.demo.models.Department;
 import com.example.demo.tables.TDepartments;
 import javafx.beans.property.SimpleStringProperty;
@@ -20,14 +21,17 @@ import javafx.scene.layout.VBox;
 import javafx.util.Callback;
 
 public class Departments {
-    private final TDepartments TDepartments = TDepartments.getInstance();
+    private final TDepartments departments = TDepartments.getInstance();
     private final TableView<Department> table = new TableView<>();
-    private ObservableList<Department> data = TDepartments.findAll();
-    final HBox hb = new HBox();
+    private ObservableList<Department> data = departments.findAll();
+    final HBox hBox = new HBox();
 
     public Scene getScene() {
         StackPane stackPane = new StackPane();
         Scene scene = new Scene(stackPane, 500, 500);
+
+        final Button home = new Button("Home");
+        home.setOnAction(e -> Main.setDefaultScene());
 
         final Label label = new Label("Departments");
 
@@ -58,8 +62,8 @@ public class Departments {
             {
                 deleteButton.setOnAction(event -> {
                     Department department = getTableView().getItems().get(getIndex());
-                    TDepartments.delete(department.getId());
-                    data = TDepartments.findAll();
+                    departments.delete(department.getId());
+                    data = departments.findAll();
                     table.setItems(data);
                     table.refresh();
                 });
@@ -89,22 +93,22 @@ public class Departments {
             Department department = new Department(
                     addName.getText()
             );
-            TDepartments.create(department);
-            data = TDepartments.findAll();
+            departments.create(department);
+            data = departments.findAll();
             table.setItems(data);
             table.refresh();
 
             addName.clear();
         });
 
-        hb.getChildren().addAll(addName, addButton);
-        hb.setSpacing(3);
+        hBox.getChildren().addAll(addName, addButton);
+        hBox.setSpacing(3);
 
         final VBox vbox = new VBox();
         vbox.setAlignment(Pos.CENTER);
         vbox.setSpacing(5);
         vbox.setPadding(new Insets(10, 0, 0, 10));
-        vbox.getChildren().addAll(label, table, hb);
+        vbox.getChildren().addAll(home, label, table, hBox);
 
         stackPane.getChildren().add(vbox);
 

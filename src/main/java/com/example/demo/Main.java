@@ -11,26 +11,27 @@ import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 
 public class Main extends Application {
-    public static void main(String[] args) {
-        launch(args);
-    }
+    private static Scene scene;
+    private static Stage stage;
 
     @Override
-    public void start(Stage stage) {
-        stage.setTitle("Department Management");
+    public void start(Stage window) {
+        stage = window;
+
+        window.setTitle("Department Management");
 
         HBox hBox = new HBox();
 
         Button showDepartmentsButton = new Button("Departments");
         showDepartmentsButton.setOnAction((e) -> {
-            stage.setTitle("Departments");
-            stage.setScene(new Departments().getScene());
+            window.setTitle("Departments");
+            window.setScene(new Departments().getScene());
         });
 
         Button showEmployeesButton = new Button("Employees");
         showEmployeesButton.setOnAction((e) -> {
-            stage.setTitle("Employees");
-            stage.setScene(new Employees().getScene());
+            window.setTitle("Employees");
+            window.setScene(new Employees().getScene());
         });
 
         hBox.getChildren().addAll(
@@ -43,8 +44,16 @@ public class Main extends Application {
         StackPane layout = new StackPane();
         layout.getChildren().add(hBox);
 
-        Scene scene = new Scene(layout, 500, 500);
+        scene = new Scene(layout, 500, 500);
+        window.setScene(scene);
+        window.show();
+    }
+
+    public static void setDefaultScene() {
         stage.setScene(scene);
-        stage.show();
+    }
+
+    public static void main(String[] args) {
+        launch(args);
     }
 }
