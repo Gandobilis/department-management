@@ -16,23 +16,25 @@ public class Main extends Application {
     }
 
     @Override
-    public void start(Stage stage) throws Exception {
+    public void start(Stage stage) {
         stage.setTitle("Department Management App");
 
         HBox hBox = new HBox();
-        Button departmentsButton = new Button("Departments");
-        departmentsButton.setOnAction((e) -> {
+
+        Button showDepartmentsButton = new Button("Departments");
+        showDepartmentsButton.setOnAction((e) -> {
             stage.setScene(new Departments().getScene());
         });
-        Button employeesButton = new Button("Employees");
-        employeesButton.setOnAction((e) -> {
+
+        Button showEmployeesButton = new Button("Employees");
+        showEmployeesButton.setOnAction((e) -> {
             stage.setScene(new Employees().getScene());
             stage.setMaximized(true);
         });
 
         hBox.getChildren().addAll(
-                departmentsButton,
-                employeesButton
+                showDepartmentsButton,
+                showEmployeesButton
         );
 
         hBox.setAlignment(Pos.CENTER);
