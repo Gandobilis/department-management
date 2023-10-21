@@ -4,6 +4,8 @@ import com.example.demo.Main;
 import com.example.demo.models.Department;
 import com.example.demo.tables.TDepartments;
 import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -29,8 +31,10 @@ public class Departments {
 
         final Label label = new Label("Departments");
 
+        table.setEditable(true);
+
         TableColumn<Department, String> nameCol = createTableColumn("Name", "name", 100);
-        TableColumn<Department, String> parentDepartmentCol = createTableColumn("Department Name", null, 100);
+        TableColumn<Department, String> parentDepartmentCol = createTableColumn("Department Name", null, 200);
 
         parentDepartmentCol.setCellValueFactory(cellData -> {
             Department department = cellData.getValue();
@@ -66,9 +70,20 @@ public class Departments {
     }
 
     private TableColumn<Department, String> createTableColumn(String text, String property, double width) {
+        Callback<TableColumn<Department, String>, TableCell<Department, String>> cellFactory = p -> new EditingCell();
+
         TableColumn<Department, String> column = new TableColumn<>(text);
         column.setMinWidth(width);
         column.setCellValueFactory(new PropertyValueFactory<>(property));
+        column.setCellFactory(cellFactory);
+        column.setOnEditCommit(t -> {
+            Department department = t.getTableView().getItems().get(t.getTablePosition().getRow());
+            department.setName(t.getNewValue());
+            departments.update(department);
+            data = departments.findAll();
+            table.setItems(data);
+            table.refresh();
+        });
         return column;
     }
 
@@ -123,5 +138,70 @@ public class Departments {
         });
         return addButton;
     }
-}
 
+    static class EditingCell extends TableCell<Department, String> {
+
+        private TextField textField;
+
+        public EditingCell() {
+        }
+
+        @Override
+        public void startEdit() {
+            if (!isEmpty()) {
+                super.startEdit();
+                createTextField();
+                setText(null);
+                setGraphic(textField);
+                textField.selectAll();
+            }
+        }
+
+        @Override
+        public void cancelEdit() {
+            super.cancelEdit();
+
+            setText(getItem());
+            setGraphic(null);
+        }
+
+        @Override
+        public void updateItem(String item, boolean empty) {
+            super.updateItem(item, empty);
+
+            if (empty) {
+                setText(null);
+                setGraphic(null);
+            } else {
+                if (isEditing()) {
+                    if (textField != null) {
+                        textField.setText(getString());
+                    }
+                    setText(null);
+                    setGraphic(textField);
+                } else {
+                    setText(getString());
+                    setGraphic(null);
+                }
+            }
+        }
+
+        private void createTextField() {
+            textField = new TextField(getString());
+            textField.setMinWidth(this.getWidth() - this.getGraphicTextGap() * 2);
+            textField.focusedProperty().addListener(new ChangeListener<Boolean>() {
+                @Override
+                public void changed(ObservableValue<? extends Boolean> arg0,
+                                    Boolean arg1, Boolean arg2) {
+                    if (!arg2) {
+                        commitEdit(textField.getText());
+                    }
+                }
+            });
+        }
+
+        private String getString() {
+            return getItem() == null ? "" : getItem().toString();
+        }
+    }
+}
