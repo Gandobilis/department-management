@@ -1,0 +1,15 @@
+.auth-container {
+    -fx-alignment: center;
+    -fx-hgap: 10;
+    -fx-vgap: 10;
+    -fx-padding: 25;
+}
+
+.title-label {
+    -fx-font-size: 24;
+}
+
+.login-button {
+    -fx-background-color: #4CAF50;
+    -fx-text-fill: white;
+}

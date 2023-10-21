@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<GridPane alignment="CENTER" hgap="10" vgap="10" padding="25" styleClass="auth-container"
+          xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.demo.controllers.AuthController">
+    <Label text="Login" styleClass="title-label" GridPane.columnSpan="2" alignment="CENTER"/>
+
+    <Label text="Username:" GridPane.rowIndex="1"/>
+    <TextField fx:id="usernameField" GridPane.columnIndex="1" GridPane.rowIndex="1"/>
+
+    <Label text="Password:" GridPane.rowIndex="2"/>
+    <PasswordField fx:id="passwordField" GridPane.columnIndex="1" GridPane.rowIndex="2"/>
+
+    <Button text="Login" styleClass="login-button" onAction="#loginButtonAction" GridPane.columnIndex="1"
+            GridPane.rowIndex="3"/>
+</GridPane>
