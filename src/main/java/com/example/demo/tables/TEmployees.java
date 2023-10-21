@@ -11,8 +11,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 public class TEmployees implements Table<Employee> {
-    private static final TDepartments T_DEPARTMENTS = TDepartments.getInstance();
-
     private static TEmployees instance;
 
     public static TEmployees getInstance() {
