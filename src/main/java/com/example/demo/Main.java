@@ -1,7 +1,7 @@
 package com.example.demo;
 
-import com.example.demo.windows.DepartmentsWindow;
-import com.example.demo.windows.EmployeesWindow;
+import com.example.demo.windows.Departments;
+import com.example.demo.windows.Employees;
 import javafx.application.Application;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -22,11 +22,11 @@ public class Main extends Application {
         HBox hBox = new HBox();
         Button departmentsButton = new Button("Departments");
         departmentsButton.setOnAction((e) -> {
-            stage.setScene(new DepartmentsWindow().getScene());
+            stage.setScene(new Departments().getScene());
         });
         Button employeesButton = new Button("Employees");
         employeesButton.setOnAction((e) -> {
-            stage.setScene(new EmployeesWindow().getScene());
+            stage.setScene(new Employees().getScene());
             stage.setMaximized(true);
         });
 

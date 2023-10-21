@@ -2,7 +2,6 @@ package com.example.demo.windows;
 
 import com.example.demo.models.Department;
 import com.example.demo.models.Employee;
-import com.example.demo.tables.Employees;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
@@ -20,8 +19,8 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.util.Callback;
 
-public class EmployeesWindow {
-    private final Employees employees = Employees.getInstance();
+public class Employees {
+    private final com.example.demo.tables.Employees employees = com.example.demo.tables.Employees.getInstance();
     private final TableView<Employee> table = new TableView<>();
     private ObservableList<Employee> data = employees.findAll();
     final HBox hb = new HBox();
