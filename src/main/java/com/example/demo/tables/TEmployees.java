@@ -1,37 +1,35 @@
 package com.example.demo.tables;
 
-import com.example.demo.database.DatabaseConnection;
+import com.example.demo.database.Connection;
 import com.example.demo.models.Department;
 import com.example.demo.models.Employee;
-import com.example.demo.models.Model;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
-import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-public class Employees implements Model<Employee> {
-    private static final Departments departments = Departments.getInstance();
+public class TEmployees implements Table<Employee> {
+    private static final TDepartments T_DEPARTMENTS = TDepartments.getInstance();
 
-    private static Employees instance;
+    private static TEmployees instance;
 
-    public static Employees getInstance() {
+    public static TEmployees getInstance() {
         if (instance == null) {
-            instance = new Employees();
+            instance = new TEmployees();
         }
         return instance;
     }
 
-    private Employees() {
+    private TEmployees() {
     }
 
     @Override
     public Employee findById(Integer id) {
         Employee employee = null;
 
-        try (Connection connection = DatabaseConnection.getConnection()) {
+        try (java.sql.Connection connection = Connection.getConnection()) {
             String query = "SELECT " +
                     "e.id, " +
                     "e.first_name, " +
@@ -64,7 +62,7 @@ public class Employees implements Model<Employee> {
     public ObservableList<Employee> findAll() {
         ObservableList<Employee> employees = FXCollections.observableArrayList();
 
-        try (Connection connection = DatabaseConnection.getConnection()) {
+        try (java.sql.Connection connection = Connection.getConnection()) {
             String query = "SELECT " +
                     "e.id, " +
                     "e.first_name, " +
@@ -92,11 +90,11 @@ public class Employees implements Model<Employee> {
 
     @Override
     public void create(Employee employee) {
-        if (departments.findByName(employee.getDepartment().getName()) == null) {
-            departments.create(employee.getDepartment());
-            employee.getDepartment().setId(departments.findByName(employee.getDepartment().getName()).getId());
+        if (T_DEPARTMENTS.findByName(employee.getDepartment().getName()) == null) {
+            T_DEPARTMENTS.create(employee.getDepartment());
+            employee.getDepartment().setId(T_DEPARTMENTS.findByName(employee.getDepartment().getName()).getId());
         }
-        try (Connection connection = DatabaseConnection.getConnection()) {
+        try (java.sql.Connection connection = Connection.getConnection()) {
             String query = "INSERT INTO employees (first_name, " +
                     "last_name, " +
                     "department_id) " +
@@ -119,7 +117,7 @@ public class Employees implements Model<Employee> {
 
     @Override
     public void update(Employee employee) {
-        try (Connection connection = DatabaseConnection.getConnection()) {
+        try (java.sql.Connection connection = Connection.getConnection()) {
             String query = "UPDATE employees " +
                     "SET first_name = ?, " +
                     "last_name = ? " +
@@ -142,7 +140,7 @@ public class Employees implements Model<Employee> {
 
     @Override
     public void delete(Integer id) {
-        try (Connection connection = DatabaseConnection.getConnection()) {
+        try (java.sql.Connection connection = Connection.getConnection()) {
             String query = "DELETE FROM employees " +
                     "WHERE id = ?";
             try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {

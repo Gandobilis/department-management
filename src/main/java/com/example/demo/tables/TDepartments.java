@@ -1,34 +1,32 @@
 package com.example.demo.tables;
 
-import com.example.demo.database.DatabaseConnection;
+import com.example.demo.database.Connection;
 import com.example.demo.models.Department;
-import com.example.demo.models.Model;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
-import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-public class Departments implements Model<Department> {
-    private static Departments instance;
+public class TDepartments implements Table<Department> {
+    private static TDepartments instance;
 
-    public static Departments getInstance() {
+    public static TDepartments getInstance() {
         if (instance == null) {
-            instance = new Departments();
+            instance = new TDepartments();
         }
         return instance;
     }
 
-    private Departments() {
+    private TDepartments() {
     }
 
     @Override
     public Department findById(Integer id) {
         Department department = null;
 
-        try (Connection connection = DatabaseConnection.getConnection()) {
+        try (java.sql.Connection connection = Connection.getConnection()) {
             String query = "SELECT id, name FROM departments WHERE id = ?";
             try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
                 preparedStatement.setInt(1, id);
@@ -51,7 +49,7 @@ public class Departments implements Model<Department> {
     public ObservableList<Department> findAll() {
         ObservableList<Department> departments = FXCollections.observableArrayList();
 
-        try (Connection connection = DatabaseConnection.getConnection()) {
+        try (java.sql.Connection connection = Connection.getConnection()) {
             String query = "SELECT d.id, d.name, d1.name as parentName FROM departments d left join departments d1 on d.id = d1.parent_department_id";
             try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
                 try (ResultSet resultSet = preparedStatement.executeQuery()) {
@@ -74,7 +72,7 @@ public class Departments implements Model<Department> {
 
     @Override
     public void create(Department department) {
-        try (Connection connection = DatabaseConnection.getConnection()) {
+        try (java.sql.Connection connection = Connection.getConnection()) {
             String query = "INSERT INTO departments (name) VALUES (?)";
             try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
                 preparedStatement.setString(1, department.getName());
@@ -92,7 +90,7 @@ public class Departments implements Model<Department> {
 
     @Override
     public void update(Department department) {
-        try (Connection connection = DatabaseConnection.getConnection()) {
+        try (java.sql.Connection connection = Connection.getConnection()) {
             String query = "UPDATE departments SET name = ? WHERE id = ?";
             try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
                 preparedStatement.setString(1, department.getName());
@@ -111,7 +109,7 @@ public class Departments implements Model<Department> {
 
     @Override
     public void delete(Integer id) {
-        try (Connection connection = DatabaseConnection.getConnection()) {
+        try (java.sql.Connection connection = Connection.getConnection()) {
             String query = "DELETE FROM departments WHERE id = ?";
             try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
                 preparedStatement.setInt(1, id);
@@ -130,7 +128,7 @@ public class Departments implements Model<Department> {
     public Department findByName(String name) {
         Department department = null;
 
-        try (Connection connection = DatabaseConnection.getConnection()) {
+        try (java.sql.Connection connection = Connection.getConnection()) {
             String query = "SELECT id, name FROM departments WHERE name = ?";
             try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
                 preparedStatement.setString(1, name);

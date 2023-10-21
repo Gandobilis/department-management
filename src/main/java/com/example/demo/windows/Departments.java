@@ -1,6 +1,7 @@
 package com.example.demo.windows;
 
 import com.example.demo.models.Department;
+import com.example.demo.tables.TDepartments;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
@@ -19,9 +20,9 @@ import javafx.scene.layout.VBox;
 import javafx.util.Callback;
 
 public class Departments {
-    private final com.example.demo.tables.Departments departments = com.example.demo.tables.Departments.getInstance();
+    private final TDepartments TDepartments = TDepartments.getInstance();
     private final TableView<Department> table = new TableView<>();
-    private ObservableList<Department> data = departments.findAll();
+    private ObservableList<Department> data = TDepartments.findAll();
     final HBox hb = new HBox();
 
     public Scene getScene() {
@@ -57,8 +58,8 @@ public class Departments {
             {
                 deleteButton.setOnAction(event -> {
                     Department department = getTableView().getItems().get(getIndex());
-                    departments.delete(department.getId());
-                    data = departments.findAll();
+                    TDepartments.delete(department.getId());
+                    data = TDepartments.findAll();
                     table.setItems(data);
                     table.refresh();
                 });
@@ -88,8 +89,8 @@ public class Departments {
             Department department = new Department(
                     addName.getText()
             );
-            departments.create(department);
-            data = departments.findAll();
+            TDepartments.create(department);
+            data = TDepartments.findAll();
             table.setItems(data);
             table.refresh();
 

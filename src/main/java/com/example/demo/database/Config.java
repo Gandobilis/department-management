@@ -6,7 +6,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.Properties;
 
-public class DatabaseConfig {
+public class Config {
     private static final String CONFIG_FILE_PATH = "src/main/java/com/example/demo/config/database.properties";
     @Getter
     private static final Properties properties;

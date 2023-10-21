@@ -1,8 +1,8 @@
-package com.example.demo.models;
+package com.example.demo.tables;
 
 import javafx.collections.ObservableList;
 
-public interface Model<T> {
+public interface Table<T> {
     T findById(Integer id);
 
     ObservableList<T> findAll();

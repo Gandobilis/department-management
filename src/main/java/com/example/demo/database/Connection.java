@@ -1,14 +1,13 @@
 package com.example.demo.database;
 
-import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.Properties;
 
-public class DatabaseConnection {
-    private static Connection connection;
+public class Connection {
+    private static java.sql.Connection connection;
 
-    public static Connection getConnection() throws SQLException {
+    public static java.sql.Connection getConnection() throws SQLException {
         if (connection == null || connection.isClosed()) {
             initializeConnection();
         }
@@ -16,7 +15,7 @@ public class DatabaseConnection {
     }
 
     private static void initializeConnection() {
-        Properties properties = DatabaseConfig.getProperties();
+        Properties properties = Config.getProperties();
 
         String dbUrl = properties.getProperty("db.url");
         String dbUsername = properties.getProperty("db.username");
