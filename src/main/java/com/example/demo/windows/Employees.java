@@ -25,7 +25,7 @@ public class Employees implements Table {
     @Override
     public Scene getScene() {
         StackPane layout = new StackPane();
-        Scene scene = new Scene(layout, 500, 500);
+        Scene scene = new Scene(layout, 1280, 720);
 
         final Button home = createHomeButton();
 
@@ -44,6 +44,7 @@ public class Employees implements Table {
         TableColumn<Employee, Void> deleteCol = createDeleteColumn();
 
         table.setItems(data);
+        table.getColumns().clear();
         table.getColumns().addAll(firstNameCol, lastNameCol, departmentNameCol, deleteCol);
 
         final VBox vbox = new VBox(home, label, table, hBox);

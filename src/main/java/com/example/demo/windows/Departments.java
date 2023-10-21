@@ -45,6 +45,7 @@ public class Departments implements Table {
         TableColumn<Department, Void> del = createDeleteColumn();
 
         table.setItems(data);
+        table.getColumns().clear();
         table.getColumns().addAll(name, parName, del);
 
         VBox forms = new VBox();
@@ -226,8 +227,6 @@ public class Departments implements Table {
     @Override
     public void loadData() {
         data = depts.findAll();
-        table.setItems(data);
-        table.refresh();
     }
 
     private void refreshTable() {
