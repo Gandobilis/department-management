@@ -17,12 +17,13 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.util.Callback;
 
-public class Departments {
+public class Departments implements Table {
     private final TEmployees emps = TEmployees.getInstance();
     private final TDepartments depts = TDepartments.getInstance();
     private final TableView<Department> table = new TableView<>();
     private ObservableList<Department> data = depts.findAll();
 
+    @Override
     public Scene getScene() {
         StackPane layout = new StackPane();
         Scene scene = new Scene(layout, 1280, 720);
@@ -50,9 +51,12 @@ public class Departments {
 
         HBox deptForm = new HBox();
         TextField deptName = createTextField("Name", name.getPrefWidth());
-        Button addDept = createDepartmentAddButton(deptName);
+        ChoiceBox<Department> parentDeptName = new ChoiceBox<>(depts.findAll());
+        parentDeptName.getSelectionModel().selectFirst();
+        parentDeptName.setTooltip(new Tooltip("Select the department"));
+        Button addDept = createDepartmentAddButton(deptName, parentDeptName);
 
-        deptForm.getChildren().addAll(deptName, addDept);
+        deptForm.getChildren().addAll(deptName, parentDeptName, addDept);
         deptForm.setSpacing(3);
 
         HBox emplForm = new HBox();
@@ -96,9 +100,8 @@ public class Departments {
             Department dept = t.getTableView().getItems().get(t.getTablePosition().getRow());
             dept.setName(t.getNewValue());
             depts.update(dept);
-            data = depts.findAll();
-            table.setItems(data);
-            table.refresh();
+            loadData();
+            refreshTable();
         });
         return column;
     }
@@ -114,9 +117,8 @@ public class Departments {
                 deleteButton.setOnAction(event -> {
                     Department dept = getTableView().getItems().get(getIndex());
                     depts.delete(dept.getId());
-                    data = depts.findAll();
-                    table.setItems(data);
-                    table.refresh();
+                    loadData();
+                    refreshTable();
                 });
             }
 
@@ -147,25 +149,20 @@ public class Departments {
         add.setOnAction(e -> {
             Employee employee = new Employee(fName.getText(), lName.getText(), emplDeptName.getSelectionModel().getSelectedItem());
             emps.create(employee);
-            data = depts.findAll();
-            table.setItems(data);
-            table.refresh();
 
             fName.clear();
             lName.clear();
-            emplDeptName.getSelectionModel().selectFirst();
         });
         return add;
     }
 
-    private Button createDepartmentAddButton(TextField nameField) {
+    private Button createDepartmentAddButton(TextField nameField, ChoiceBox<Department> parentDeptName) {
         Button addDept = new Button("Add Department");
         addDept.setOnAction(e -> {
-            Department dept = new Department(nameField.getText());
+            Department dept = new Department(nameField.getText(), parentDeptName.getSelectionModel().getSelectedItem());
             depts.create(dept);
-            data = depts.findAll();
-            table.setItems(data);
-            table.refresh();
+            loadData();
+            refreshTable();
 
             nameField.clear();
         });
@@ -173,6 +170,7 @@ public class Departments {
     }
 
     static class EditingCell extends TableCell<Department, String> {
+
         private TextField textField;
 
         @Override
@@ -222,5 +220,18 @@ public class Departments {
         private String getString() {
             return getItem() == null ? "" : getItem();
         }
+
+    }
+
+    @Override
+    public void loadData() {
+        data = depts.findAll();
+        table.setItems(data);
+        table.refresh();
+    }
+
+    private void refreshTable() {
+        table.setItems(data);
+        table.refresh();
     }
 }

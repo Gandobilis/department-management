@@ -2,6 +2,7 @@ package com.example.demo;
 
 import com.example.demo.windows.Departments;
 import com.example.demo.windows.Employees;
+import com.example.demo.windows.Table;
 import javafx.application.Application;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -24,9 +25,12 @@ public class Main extends Application {
         stage = primaryStage;
         stage.setTitle(DEFAULT_TITLE);
 
+        Departments departments = new Departments();
+        Employees employees = new Employees();
+
         HBox hBox = new HBox(
-                showButton("Departments", new Departments().getScene(), "Departments Table"),
-                showButton("Employees", new Employees().getScene(), "Employees Table")
+                showButton("Departments", departments, "Departments Table"),
+                showButton("Employees", employees, "Employees Table")
         );
         hBox.setSpacing(3);
 
@@ -38,11 +42,12 @@ public class Main extends Application {
         stage.show();
     }
 
-    private Button showButton(String buttonText, Scene newScene, String newTitle) {
+    private Button showButton(String buttonText, Table table, String newTitle) {
         Button button = new Button(buttonText);
         button.setOnAction((e) -> {
             stage.setTitle(newTitle);
-            stage.setScene(newScene);
+            table.loadData();
+            stage.setScene(table.getScene());
         });
         return button;
     }

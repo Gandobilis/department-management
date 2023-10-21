@@ -73,9 +73,10 @@ public class TDepartments implements Table<Department> {
     @Override
     public void create(Department department) {
         try (java.sql.Connection connection = Connection.getConnection()) {
-            String query = "INSERT INTO departments (name) VALUES (?)";
+            String query = "INSERT INTO departments (name, parent_department_id) VALUES (?, ?)";
             try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
                 preparedStatement.setString(1, department.getName());
+                preparedStatement.setInt(2, department.getParentDepartment().getId());
                 int affectedRows = preparedStatement.executeUpdate();
                 if (affectedRows > 0) {
                     System.out.println("Department added successfully.");

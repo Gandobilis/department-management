@@ -11,15 +11,18 @@ import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.scene.layout.*;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.StackPane;
+import javafx.scene.layout.VBox;
 import javafx.util.Callback;
 
-public class Employees {
+public class Employees implements Table {
     private final TEmployees employees = TEmployees.getInstance();
     private final TableView<Employee> table = new TableView<>();
     private ObservableList<Employee> data = employees.findAll();
     final HBox hBox = new HBox();
 
+    @Override
     public Scene getScene() {
         StackPane layout = new StackPane();
         Scene scene = new Scene(layout, 500, 500);
@@ -70,9 +73,8 @@ public class Employees {
                 deleteButton.setOnAction(event -> {
                     Employee employee = getTableView().getItems().get(getIndex());
                     employees.delete(employee.getId());
-                    data = employees.findAll();
-                    table.setItems(data);
-                    table.refresh();
+                    loadData();
+                    refreshTable();
                 });
             }
 
@@ -95,5 +97,15 @@ public class Employees {
         Button home = new Button("Home");
         home.setOnAction(e -> Main.setDefaultScene());
         return home;
+    }
+
+    @Override
+    public void loadData() {
+        data = employees.findAll();
+    }
+
+    private void refreshTable(){
+        table.setItems(data);
+        table.refresh();
     }
 }
