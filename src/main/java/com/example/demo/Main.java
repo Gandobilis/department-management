@@ -17,19 +17,20 @@ public class Main extends Application {
 
     @Override
     public void start(Stage stage) {
-        stage.setTitle("Department Management App");
+        stage.setTitle("Department Management");
 
         HBox hBox = new HBox();
 
         Button showDepartmentsButton = new Button("Departments");
         showDepartmentsButton.setOnAction((e) -> {
+            stage.setTitle("Departments");
             stage.setScene(new Departments().getScene());
         });
 
         Button showEmployeesButton = new Button("Employees");
         showEmployeesButton.setOnAction((e) -> {
+            stage.setTitle("Employees");
             stage.setScene(new Employees().getScene());
-            stage.setMaximized(true);
         });
 
         hBox.getChildren().addAll(
