@@ -8,12 +8,7 @@ import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.TableCell;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
@@ -30,29 +25,54 @@ public class Departments {
         StackPane stackPane = new StackPane();
         Scene scene = new Scene(stackPane, 500, 500);
 
-        final Button home = new Button("Home");
-        home.setOnAction(e -> Main.setDefaultScene());
+        final Button home = createHomeButton();
 
         final Label label = new Label("Departments");
 
-        TableColumn<Department, String> nameCol = new TableColumn<>("Name");
-        nameCol.setMinWidth(100);
-        nameCol.setCellValueFactory(
-                new PropertyValueFactory<>("name"));
-
-        TableColumn<Department, String> parentDepartmentCol = new TableColumn<>("Department Name");
-        parentDepartmentCol.setMinWidth(100);
+        TableColumn<Department, String> nameCol = createTableColumn("Name", "name", 100);
+        TableColumn<Department, String> parentDepartmentCol = createTableColumn("Department Name", null, 100);
 
         parentDepartmentCol.setCellValueFactory(cellData -> {
             Department department = cellData.getValue();
             Department parentDepartment = department.getParentDepartment();
-            if (parentDepartment != null) {
-                return new SimpleStringProperty(parentDepartment.getName());
-            } else {
-                return new SimpleStringProperty("No Parent Department");
-            }
+            return new SimpleStringProperty(parentDepartment != null ? parentDepartment.getName() : "No Parent Department");
         });
 
+        TableColumn<Department, Void> deleteCol = createDeleteColumn();
+
+        table.setItems(data);
+        table.getColumns().addAll(nameCol, parentDepartmentCol, deleteCol);
+
+        final TextField addName = createTextField("Name", nameCol.getPrefWidth());
+        final Button addButton = createAddButton(addName);
+
+        hBox.getChildren().addAll(addName, addButton);
+        hBox.setSpacing(3);
+
+        final VBox vbox = new VBox(home, label, table, hBox);
+        vbox.setAlignment(Pos.CENTER);
+        vbox.setSpacing(5);
+        vbox.setPadding(new Insets(10, 0, 0, 10));
+
+        stackPane.getChildren().add(vbox);
+
+        return scene;
+    }
+
+    private Button createHomeButton() {
+        Button home = new Button("Home");
+        home.setOnAction(e -> Main.setDefaultScene());
+        return home;
+    }
+
+    private TableColumn<Department, String> createTableColumn(String text, String property, double width) {
+        TableColumn<Department, String> column = new TableColumn<>(text);
+        column.setMinWidth(width);
+        column.setCellValueFactory(new PropertyValueFactory<>(property));
+        return column;
+    }
+
+    private TableColumn<Department, Void> createDeleteColumn() {
         TableColumn<Department, Void> deleteCol = new TableColumn<>("Delete");
         deleteCol.setMinWidth(50);
 
@@ -81,37 +101,27 @@ public class Departments {
         };
         deleteCol.setCellFactory(cellFactory);
 
-        table.setItems(data);
-        table.getColumns().addAll(nameCol, parentDepartmentCol, deleteCol);
+        return deleteCol;
+    }
 
-        final TextField addName = new TextField();
-        addName.setPromptText("First Name");
-        addName.setMaxWidth(nameCol.getPrefWidth());
+    private TextField createTextField(String prompt, double width) {
+        TextField textField = new TextField();
+        textField.setPromptText(prompt);
+        textField.setMaxWidth(width);
+        return textField;
+    }
 
-        final Button addButton = new Button("Add");
+    private Button createAddButton(TextField nameField) {
+        Button addButton = new Button("Add");
         addButton.setOnAction(e -> {
-            Department department = new Department(
-                    addName.getText()
-            );
+            Department department = new Department(nameField.getText());
             departments.create(department);
             data = departments.findAll();
             table.setItems(data);
             table.refresh();
-
-            addName.clear();
+            nameField.clear();
         });
-
-        hBox.getChildren().addAll(addName, addButton);
-        hBox.setSpacing(3);
-
-        final VBox vbox = new VBox();
-        vbox.setAlignment(Pos.CENTER);
-        vbox.setSpacing(5);
-        vbox.setPadding(new Insets(10, 0, 0, 10));
-        vbox.getChildren().addAll(home, label, table, hBox);
-
-        stackPane.getChildren().add(vbox);
-
-        return scene;
+        return addButton;
     }
 }
+
