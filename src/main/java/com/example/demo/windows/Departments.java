@@ -6,8 +6,6 @@ import com.example.demo.models.Employee;
 import com.example.demo.tables.TDepartments;
 import com.example.demo.tables.TEmployees;
 import javafx.beans.property.SimpleStringProperty;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -20,70 +18,71 @@ import javafx.scene.layout.VBox;
 import javafx.util.Callback;
 
 public class Departments {
-    private final TEmployees employees = TEmployees.getInstance();
-    private final TDepartments departments = TDepartments.getInstance();
-    private final TableView<Department> departmentsTable = new TableView<>();
-    private ObservableList<Department> departmentsData = departments.findAll();
+    private final TEmployees emps = TEmployees.getInstance();
+    private final TDepartments depts = TDepartments.getInstance();
+    private final TableView<Department> table = new TableView<>();
+    private ObservableList<Department> data = depts.findAll();
 
     public Scene getScene() {
-        StackPane departmentsLayout = new StackPane();
-        Scene scene = new Scene(departmentsLayout, 500, 600);
+        StackPane layout = new StackPane();
+        Scene scene = new Scene(layout, 1280, 720);
 
-        Button homeButton = createHomeButton();
+        Button home = createHomeButton();
+        Label label = new Label("Departments");
 
-        Label departmentsLabel = new Label("Departments");
+        table.setEditable(true);
 
-        departmentsTable.setEditable(true);
+        TableColumn<Department, String> name = createTableColumn("Name", "name", 100);
+        TableColumn<Department, String> parName = createTableColumn("Parent Name", null, 250);
 
-        TableColumn<Department, String> departmentNameCol = createTableColumn("Department Name", "name", 100);
-        TableColumn<Department, String> parentDepartmentNameCol = createTableColumn("Parent Department Name", null, 250);
-
-        parentDepartmentNameCol.setCellValueFactory(cellData -> {
-            Department department = cellData.getValue();
-            Department parentDepartment = department.getParentDepartment();
-            return new SimpleStringProperty(parentDepartment != null ? parentDepartment.getName() : "No Parent Department");
+        parName.setCellValueFactory(cellData -> {
+            Department dept = cellData.getValue();
+            Department parDept = dept.getParentDepartment();
+            return new SimpleStringProperty(parDept != null ? parDept.getName() : "No Parent");
         });
 
-        TableColumn<Department, Void> deleteDepartmentCol = createDeleteColumn();
+        TableColumn<Department, Void> del = createDeleteColumn();
 
-        departmentsTable.setItems(departmentsData);
-        departmentsTable.getColumns().addAll(departmentNameCol, parentDepartmentNameCol, deleteDepartmentCol);
+        table.setItems(data);
+        table.getColumns().addAll(name, parName, del);
 
-        VBox vBox = new VBox();
+        VBox forms = new VBox();
 
-        HBox hBox = new HBox();
-        TextField addDepartmentName = createTextField("Name", departmentNameCol.getPrefWidth());
-        Button addDepartmentButton = createDepartmentAddButton(addDepartmentName);
+        HBox deptForm = new HBox();
+        TextField deptName = createTextField("Name", name.getPrefWidth());
+        Button addDept = createDepartmentAddButton(deptName);
 
-        hBox.getChildren().addAll(addDepartmentName, addDepartmentButton);
-        hBox.setSpacing(3);
+        deptForm.getChildren().addAll(deptName, addDept);
+        deptForm.setSpacing(3);
 
-        HBox hBox1 = new HBox();
-        TextField addFirstName = createTextField("First Name", departmentNameCol.getPrefWidth());
-        TextField addLastName = createTextField("Last Name", departmentNameCol.getPrefWidth());
-        TextField addEmployeeDepartmentName = createTextField("Department Name", departmentNameCol.getPrefWidth());
-        Button addEmployeeButton = createEmployeeAddButton(addFirstName, addLastName, addEmployeeDepartmentName);
+        HBox emplForm = new HBox();
+        TextField fName = createTextField("First Name", name.getPrefWidth());
+        TextField lName = createTextField("Last Name", name.getPrefWidth());
+        ChoiceBox<Department> emplDeptName = new ChoiceBox<>(depts.findAll());
+        emplDeptName.getSelectionModel().selectFirst();
+        emplDeptName.setTooltip(new Tooltip("Select the department"));
+        Button addEmpl = createEmployeeAddButton(fName, lName, emplDeptName);
 
-        hBox1.getChildren().addAll(addFirstName, addLastName, addEmployeeDepartmentName, addEmployeeButton);
-        hBox1.setSpacing(3);
+        emplForm.getChildren().addAll(fName, lName, emplDeptName, addEmpl);
+        emplForm.setSpacing(3);
 
-        vBox.getChildren().addAll(hBox, hBox1);
-        vBox.setSpacing(5);
+        forms.getChildren().addAll(deptForm, emplForm);
+        forms.setSpacing(5);
 
-        VBox vbox = new VBox(homeButton, departmentsLabel, departmentsTable, vBox);
-        vbox.setAlignment(Pos.CENTER);
-        vbox.setSpacing(5);
-        vbox.setPadding(new Insets(10, 0, 0, 10));
+        VBox container = new VBox(home, label, table, forms);
+        container.setAlignment(Pos.CENTER);
+        container.setSpacing(5);
+        container.setPadding(new Insets(10, 0, 0, 10));
 
-        departmentsLayout.getChildren().add(vbox);
+        layout.getChildren().add(container);
 
         return scene;
     }
 
     private Button createHomeButton() {
-        Button homeButton = new Button("Home");
-        homeButton.setOnAction(e -> Main.setDefaultScene());
-        return homeButton;
+        Button home = new Button("Home");
+        home.setOnAction(e -> Main.setDefaultScene());
+        return home;
     }
 
     private TableColumn<Department, String> createTableColumn(String text, String property, double width) {
@@ -94,30 +93,30 @@ public class Departments {
         column.setCellValueFactory(new PropertyValueFactory<>(property));
         column.setCellFactory(cellFactory);
         column.setOnEditCommit(t -> {
-            Department department = t.getTableView().getItems().get(t.getTablePosition().getRow());
-            department.setName(t.getNewValue());
-            departments.update(department);
-            departmentsData = departments.findAll();
-            departmentsTable.setItems(departmentsData);
-            departmentsTable.refresh();
+            Department dept = t.getTableView().getItems().get(t.getTablePosition().getRow());
+            dept.setName(t.getNewValue());
+            depts.update(dept);
+            data = depts.findAll();
+            table.setItems(data);
+            table.refresh();
         });
         return column;
     }
 
     private TableColumn<Department, Void> createDeleteColumn() {
-        TableColumn<Department, Void> deleteDepartmentCol = new TableColumn<>("Delete");
-        deleteDepartmentCol.setMinWidth(50);
+        TableColumn<Department, Void> del = new TableColumn<>("Delete");
+        del.setMinWidth(50);
 
         Callback<TableColumn<Department, Void>, TableCell<Department, Void>> cellFactory = param -> new TableCell<>() {
-            private final Button deleteButton = new Button("Delete");
+            final Button deleteButton = new Button("Delete");
 
             {
                 deleteButton.setOnAction(event -> {
-                    Department department = getTableView().getItems().get(getIndex());
-                    departments.delete(department.getId());
-                    departmentsData = departments.findAll();
-                    departmentsTable.setItems(departmentsData);
-                    departmentsTable.refresh();
+                    Department dept = getTableView().getItems().get(getIndex());
+                    depts.delete(dept.getId());
+                    data = depts.findAll();
+                    table.setItems(data);
+                    table.refresh();
                 });
             }
 
@@ -131,9 +130,9 @@ public class Departments {
                 }
             }
         };
-        deleteDepartmentCol.setCellFactory(cellFactory);
+        del.setCellFactory(cellFactory);
 
-        return deleteDepartmentCol;
+        return del;
     }
 
     private TextField createTextField(String prompt, double width) {
@@ -143,41 +142,38 @@ public class Departments {
         return textField;
     }
 
-    private Button createEmployeeAddButton(TextField firstName, TextField lastName, TextField departmentName) {
-        Button addButton = new Button("Add Employee");
-        addButton.setOnAction(e -> {
-            Employee employee = new Employee(firstName.getText(), lastName.getText(), new Department(departmentName.getText()));
-            employees.create(employee);
-            departmentsData = departments.findAll();
-            departmentsTable.setItems(departmentsData);
-            departmentsTable.refresh();
+    private Button createEmployeeAddButton(TextField fName, TextField lName, ChoiceBox<Department> emplDeptName) {
+        Button add = new Button("Add Employee");
+        add.setOnAction(e -> {
+            Employee employee = new Employee(fName.getText(), lName.getText(), emplDeptName.getSelectionModel().getSelectedItem());
+            emps.create(employee);
+            data = depts.findAll();
+            table.setItems(data);
+            table.refresh();
 
-            firstName.clear();
-            lastName.clear();
-            departmentName.clear();
+            fName.clear();
+            lName.clear();
+            emplDeptName.getSelectionModel().selectFirst();
         });
-        return addButton;
+        return add;
     }
 
     private Button createDepartmentAddButton(TextField nameField) {
-        Button addDepartmentButton = new Button("Add Department");
-        addDepartmentButton.setOnAction(e -> {
-            Department department = new Department(nameField.getText());
-            departments.create(department);
-            departmentsData = departments.findAll();
-            departmentsTable.setItems(departmentsData);
-            departmentsTable.refresh();
+        Button addDept = new Button("Add Department");
+        addDept.setOnAction(e -> {
+            Department dept = new Department(nameField.getText());
+            depts.create(dept);
+            data = depts.findAll();
+            table.setItems(data);
+            table.refresh();
+
             nameField.clear();
         });
-        return addDepartmentButton;
+        return addDept;
     }
 
     static class EditingCell extends TableCell<Department, String> {
-
         private TextField textField;
-
-        public EditingCell() {
-        }
 
         @Override
         public void startEdit() {
@@ -193,8 +189,6 @@ public class Departments {
         @Override
         public void cancelEdit() {
             super.cancelEdit();
-
-            setText(getItem());
             setGraphic(null);
         }
 
@@ -207,9 +201,7 @@ public class Departments {
                 setGraphic(null);
             } else {
                 if (isEditing()) {
-                    if (textField != null) {
-                        textField.setText(getString());
-                    }
+                    if (textField != null) textField.setText(getString());
                     setText(null);
                     setGraphic(textField);
                 } else {
@@ -222,14 +214,8 @@ public class Departments {
         private void createTextField() {
             textField = new TextField(getString());
             textField.setMinWidth(this.getWidth() - this.getGraphicTextGap() * 2);
-            textField.focusedProperty().addListener(new ChangeListener<Boolean>() {
-                @Override
-                public void changed(ObservableValue<? extends Boolean> arg0,
-                                    Boolean arg1, Boolean arg2) {
-                    if (!arg2) {
-                        commitEdit(textField.getText());
-                    }
-                }
+            textField.focusedProperty().addListener((arg0, arg1, arg2) -> {
+                if (!arg2) commitEdit(textField.getText());
             });
         }
 

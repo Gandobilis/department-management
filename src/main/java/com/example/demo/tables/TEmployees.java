@@ -90,10 +90,6 @@ public class TEmployees implements Table<Employee> {
 
     @Override
     public void create(Employee employee) {
-        if (T_DEPARTMENTS.findByName(employee.getDepartment().getName()) == null) {
-            T_DEPARTMENTS.create(employee.getDepartment());
-            employee.getDepartment().setId(T_DEPARTMENTS.findByName(employee.getDepartment().getName()).getId());
-        }
         try (java.sql.Connection connection = Connection.getConnection()) {
             String query = "INSERT INTO employees (first_name, " +
                     "last_name, " +

@@ -50,4 +50,9 @@ public class Department {
     public void setParentDepartment(Department parentDepartment) {
         this.parentDepartment.set(parentDepartment);
     }
+
+    @Override
+    public String toString() {
+        return getName();
+    }
 }
