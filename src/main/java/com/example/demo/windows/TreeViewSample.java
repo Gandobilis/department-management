@@ -1,6 +1,8 @@
 package com.example.demo.windows;
 
+import com.example.demo.models.Department;
 import com.example.demo.models.Employee;
+import com.example.demo.tables.TDepartments;
 import com.example.demo.tables.TEmployees;
 import javafx.application.Application;
 import javafx.collections.ObservableList;
@@ -18,7 +20,11 @@ import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.layout.VBox;
 
+import java.util.Map;
+import java.util.stream.Collectors;
+
 public class TreeViewSample extends Application {
+    ObservableList<Department> departments = TDepartments.getInstance().findAll();
     ObservableList<Employee> employees = TEmployees.getInstance().findAll();
     TreeItem<String> rootNode =
             new TreeItem<>("Departments");
@@ -27,25 +33,46 @@ public class TreeViewSample extends Application {
         Application.launch(args);
     }
 
+    private TreeItem<String> findDepartmentNode(TreeItem<String> parent, String departmentName) {
+        for (TreeItem<String> departmentNode : parent.getChildren()) {
+            if (departmentNode.getValue().equals(departmentName)) {
+                return departmentNode;
+            }
+
+            TreeItem<String> foundInChild = findDepartmentNode(departmentNode, departmentName);
+            if (foundInChild != null) {
+                return foundInChild;
+            }
+        }
+        return null;
+    }
+
     @Override
     public void start(Stage stage) {
         rootNode.setExpanded(true);
+        TreeItem<String> rootNode = new TreeItem<>("Root Department");
+        for (Department department : departments) {
+            TreeItem<String> departmentNode = findDepartmentNode(rootNode, department.getParentDepartment().getName());
+
+            if (departmentNode == null) {
+                departmentNode = new TreeItem<>(department.getParentDepartment().getName());
+                rootNode.getChildren().add(departmentNode);
+            }
+
+            TreeItem<String> empLeaf = new TreeItem<>(department.getName());
+
+            // Add employees as child nodes of the department
+            departmentNode.getChildren().add(empLeaf);
+        }
+
         for (Employee employee : employees) {
-            TreeItem<String> empLeaf = new TreeItem<>(employee.toString());
-            boolean found = false;
-            for (TreeItem<String> depNode : rootNode.getChildren()) {
-                if (depNode.getValue().contentEquals(employee.getDepartment().toString())) {
-                    depNode.getChildren().add(empLeaf);
-                    found = true;
-                    break;
-                }
-            }
-            if (!found) {
-                TreeItem depNode = new TreeItem(employee.getDepartment().toString()
-                );
-                rootNode.getChildren().add(depNode);
-                depNode.getChildren().add(empLeaf);
-            }
+            TreeItem<String> departmentNode = findDepartmentNode(rootNode, employee.getDepartment().getName());
+
+            TreeItem<String> empLeaf = new TreeItem<>(employee.getFirstName() + " " + employee.getLastName());
+
+            // Add employees as child nodes of the department
+            assert departmentNode != null;
+            departmentNode.getChildren().add(empLeaf);
         }
 
         stage.setTitle("Tree View Sample");

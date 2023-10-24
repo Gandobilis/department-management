@@ -49,6 +49,10 @@ public class Department {
 
     @Override
     public String toString() {
-        return getName();
+        return "Department{" +
+                "id=" + id +
+                ", name=" + name +
+                ", parentDepartment=" + parentDepartment +
+                '}';
     }
 }

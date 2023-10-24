@@ -50,15 +50,15 @@ public class TDepartments implements Table<Department> {
         ObservableList<Department> departments = FXCollections.observableArrayList();
 
         try (java.sql.Connection connection = Connection.getConnection()) {
-            String query = "SELECT d.id, d.name, d1.name as parentName FROM departments d left join departments d1 on d.parent_department_id = d1.id";
+            String query = "SELECT d.department_id, d.department_name, d1.department_name as parentName FROM departments d left join departments d1 on d.parent_department_id = d1.department_id";
             try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
                 try (ResultSet resultSet = preparedStatement.executeQuery()) {
                     while (resultSet.next()) {
-                        Integer id = resultSet.getInt("id");
-                        String name = resultSet.getString("name");
+                        Integer id = resultSet.getInt("department_id");
+                        String name = resultSet.getString("department_name");
                         String parentName = resultSet.getString("parentName");
                         departments.add(new Department(id, name,
-                                parentName != null ? new Department(parentName) : null
+                                new Department(parentName != null ? parentName : "")
                         ));
                     }
                 }
