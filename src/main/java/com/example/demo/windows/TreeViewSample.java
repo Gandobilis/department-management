@@ -1,8 +1,9 @@
 package com.example.demo.windows;
 
-import java.util.Arrays;
-import java.util.List;
+import com.example.demo.models.Employee;
+import com.example.demo.tables.TEmployees;
 import javafx.application.Application;
+import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
 import javafx.scene.Scene;
 import javafx.scene.control.TextField;
@@ -13,26 +14,14 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 
-import javafx.beans.property.SimpleStringProperty;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.layout.VBox;
 
 public class TreeViewSample extends Application {
-    List<Employee> employees = Arrays.asList(
-            new Employee("Ethan Williams", "Sales Department"),
-            new Employee("Emma Jones", "Sales Department"),
-            new Employee("Michael Brown", "Sales Department"),
-            new Employee("Anna Black", "Sales Department"),
-            new Employee("Rodger York", "Sales Department"),
-            new Employee("Susan Collins", "Sales Department"),
-            new Employee("Mike Graham", "IT Support"),
-            new Employee("Judy Mayer", "IT Support"),
-            new Employee("Gregory Smith", "IT Support"),
-            new Employee("Jacob Smith", "Accounts Department"),
-            new Employee("Isabella Johnson", "Accounts Department"));
+    ObservableList<Employee> employees = TEmployees.getInstance().findAll();
     TreeItem<String> rootNode =
-            new TreeItem<>("MyCompany Human Resources");
+            new TreeItem<>("Departments");
 
     public static void main(String[] args) {
         Application.launch(args);
@@ -42,17 +31,17 @@ public class TreeViewSample extends Application {
     public void start(Stage stage) {
         rootNode.setExpanded(true);
         for (Employee employee : employees) {
-            TreeItem<String> empLeaf = new TreeItem<>(employee.getName());
+            TreeItem<String> empLeaf = new TreeItem<>(employee.toString());
             boolean found = false;
             for (TreeItem<String> depNode : rootNode.getChildren()) {
-                if (depNode.getValue().contentEquals(employee.getDepartment())){
+                if (depNode.getValue().contentEquals(employee.getDepartment().toString())) {
                     depNode.getChildren().add(empLeaf);
                     found = true;
                     break;
                 }
             }
             if (!found) {
-                TreeItem depNode = new TreeItem(employee.getDepartment()
+                TreeItem depNode = new TreeItem(employee.getDepartment().toString()
                 );
                 rootNode.getChildren().add(depNode);
                 depNode.getChildren().add(empLeaf);
@@ -83,7 +72,7 @@ public class TreeViewSample extends Application {
             addMenu.getItems().add(addMenuItem);
             addMenuItem.setOnAction((EventHandler) t -> {
                 TreeItem newEmployee =
-                        new TreeItem<String>("New Employee");
+                        new TreeItem<>("New Employee");
                 getTreeItem().getChildren().add(newEmployee);
             });
         }
@@ -126,8 +115,8 @@ public class TreeViewSample extends Application {
                     setText(getString());
                     setGraphic(getTreeItem().getGraphic());
                     if (
-                            !getTreeItem().isLeaf()&&getTreeItem().getParent()!= null
-                    ){
+                            !getTreeItem().isLeaf() && getTreeItem().getParent() != null
+                    ) {
                         setContextMenu(addMenu);
                     }
                 }
@@ -148,33 +137,6 @@ public class TreeViewSample extends Application {
 
         private String getString() {
             return getItem() == null ? "" : getItem().toString();
-        }
-    }
-
-    public static class Employee {
-
-        private final SimpleStringProperty name;
-        private final SimpleStringProperty department;
-
-        private Employee(String name, String department) {
-            this.name = new SimpleStringProperty(name);
-            this.department = new SimpleStringProperty(department);
-        }
-
-        public String getName() {
-            return name.get();
-        }
-
-        public void setName(String fName) {
-            name.set(fName);
-        }
-
-        public String getDepartment() {
-            return department.get();
-        }
-
-        public void setDepartment(String fName) {
-            department.set(fName);
         }
     }
 }

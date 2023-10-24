@@ -49,4 +49,9 @@ public class Employee {
     public Department getDepartment() {
         return department.get();
     }
+
+    @Override
+    public String toString() {
+        return getFirstName() + " " + getLastName();
+    }
 }

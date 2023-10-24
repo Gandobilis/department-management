@@ -62,19 +62,19 @@ public class TEmployees implements Table<Employee> {
 
         try (java.sql.Connection connection = Connection.getConnection()) {
             String query = "SELECT " +
-                    "e.id, " +
+                    "e.employee_id, " +
                     "e.first_name, " +
                     "e.last_name, " +
-                    "d.name " +
+                    "d.department_name " +
                     "FROM employees e join departments d " +
-                    "on e.department_id = d.id";
+                    "on e.department_id = d.department_id";
             try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
                 try (ResultSet resultSet = preparedStatement.executeQuery()) {
                     while (resultSet.next()) {
-                        Integer id = resultSet.getInt("id");
+                        Integer id = resultSet.getInt("employee_id");
                         String firstName = resultSet.getString("first_name");
                         String lastName = resultSet.getString("last_name");
-                        String name = resultSet.getString("name");
+                        String name = resultSet.getString("department_name");
                         employees.add(new Employee(id, firstName, lastName, new Department(name)));
                     }
                 }
