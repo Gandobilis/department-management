@@ -25,29 +25,11 @@ public class TreeViewSample extends Application {
 
     @Override
     public void start(Stage stage) {
-        for (Department department : departments) {
-            TreeItem<DepartmentOrEmployee> departmentNode = findDepartmentNode(rootNode, department);
+        // Create tree nodes for departments and employees
+        createDepartmentNodes();
+//        createEmployeeNodes();
 
-            if (departmentNode == null) {
-                departmentNode = new TreeItem<>(new DepartmentOrEmployee(department));
-                rootNode.getChildren().add(departmentNode);
-            }
-
-            TreeItem<DepartmentOrEmployee> departmentLeaf = new TreeItem<>(new DepartmentOrEmployee(department));
-
-            departmentNode.getChildren().add(departmentLeaf);
-        }
-
-        for (Employee employee : employees) {
-            TreeItem<DepartmentOrEmployee> departmentNode = findDepartmentNode(rootNode, employee.getDepartment());
-
-            TreeItem<DepartmentOrEmployee> employeeLeaf = new TreeItem<>(new DepartmentOrEmployee(employee));
-
-            if (departmentNode != null) {
-                departmentNode.getChildren().add(employeeLeaf);
-            }
-        }
-
+        // Set up the JavaFX scene
         VBox box = new VBox();
         Scene scene = new Scene(box, 400, 300);
         scene.setFill(Color.LIGHTGRAY);
@@ -59,9 +41,38 @@ public class TreeViewSample extends Application {
         stage.show();
     }
 
+    // Helper method to create department nodes and add them to the tree
+    private void createDepartmentNodes() {
+        for (Department department : departments) {
+            TreeItem<DepartmentOrEmployee> departmentNode = findDepartmentNode(rootNode, department.getParentDepartment());
+
+            if (departmentNode == null) {
+                departmentNode = new TreeItem<>(new DepartmentOrEmployee(department));
+                rootNode.getChildren().add(departmentNode);
+            } else {
+                TreeItem<DepartmentOrEmployee> departmentLeaf = new TreeItem<>(new DepartmentOrEmployee(department));
+                departmentNode.getChildren().add(departmentLeaf);
+            }
+        }
+    }
+
+    // Helper method to create employee nodes and add them to the tree
+    private void createEmployeeNodes() {
+        for (Employee employee : employees) {
+            TreeItem<DepartmentOrEmployee> departmentNode = findDepartmentNode(rootNode, employee.getDepartment());
+
+            if (departmentNode != null) {
+                TreeItem<DepartmentOrEmployee> employeeLeaf = new TreeItem<>(new DepartmentOrEmployee(employee));
+                departmentNode.getChildren().add(employeeLeaf);
+            }
+        }
+    }
+
+    // Helper method to find a department node in the tree
     private TreeItem<DepartmentOrEmployee> findDepartmentNode(TreeItem<DepartmentOrEmployee> parent, Department department) {
         for (TreeItem<DepartmentOrEmployee> departmentNode : parent.getChildren()) {
-            if (departmentNode.getValue().isDepartment() && departmentNode.getValue().getDepartment().getName().equals(department.getName())) {
+            boolean isParentDepartment = departmentNode.getValue().getDepartment().getName().equals(department.getName());
+            if (isParentDepartment) {
                 return departmentNode;
             }
 

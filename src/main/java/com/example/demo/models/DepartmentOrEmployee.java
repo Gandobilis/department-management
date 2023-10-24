@@ -15,14 +15,6 @@ public class DepartmentOrEmployee {
         this.employee = employee;
     }
 
-    public boolean isDepartment() {
-        return department == null;
-    }
-
-    public boolean isEmployee() {
-        return employee == null;
-    }
-
     @Override
     public String toString() {
         return department == null ? employee.toString() : department.toString();
