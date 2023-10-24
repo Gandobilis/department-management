@@ -27,7 +27,7 @@ public class TreeViewSample extends Application {
     public void start(Stage stage) {
         // Create tree nodes for departments and employees
         createDepartmentNodes();
-//        createEmployeeNodes();
+        createEmployeeNodes();
 
         // Set up the JavaFX scene
         VBox box = new VBox();
@@ -71,8 +71,7 @@ public class TreeViewSample extends Application {
     // Helper method to find a department node in the tree
     private TreeItem<DepartmentOrEmployee> findDepartmentNode(TreeItem<DepartmentOrEmployee> parent, Department department) {
         for (TreeItem<DepartmentOrEmployee> departmentNode : parent.getChildren()) {
-            boolean isParentDepartment = departmentNode.getValue().getDepartment().getName().equals(department.getName());
-            if (isParentDepartment) {
+            if (!departmentNode.getValue().isEmployee() && departmentNode.getValue().getDepartment().getName().equals(department.getName())) {
                 return departmentNode;
             }
 
