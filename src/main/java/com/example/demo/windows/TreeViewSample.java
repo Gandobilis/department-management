@@ -23,6 +23,7 @@ public class TreeViewSample extends Application {
     private ObservableList<Department> departments = TDepartments.getInstance().findAll();
     private ObservableList<Employee> employees = TEmployees.getInstance().findAll();
     private final TreeItem<DepartmentOrEmployee> rootNode = new TreeItem<>(new DepartmentOrEmployee(new Department("Departments")));
+    TreeView<DepartmentOrEmployee> treeView = new TreeView<>(rootNode);
 
     public static void main(String[] args) {
         Application.launch(args);
@@ -32,7 +33,6 @@ public class TreeViewSample extends Application {
     public void start(Stage stage) {
         // Create tree nodes for departments and employees
         createDepartmentNodes();
-        createEmployeeNodes();
 
         table.setEditable(true);
         TableColumn<Employee, String> fName = createTableColumn("First Name", "firstName", 100);
@@ -50,8 +50,6 @@ public class TreeViewSample extends Application {
 
         table.setItems(employees);
         table.getColumns().addAll(fName, lName, deptName, edit, del);
-
-        TreeView<DepartmentOrEmployee> treeView = new TreeView<>(rootNode);
 
         MenuItem employeeContextMenu = createEmployeeContextMenu();
         MenuItem departmentContextMenu = createDepartmentContextMenu();
@@ -80,6 +78,7 @@ public class TreeViewSample extends Application {
 
     // Helper method to create department nodes and add them to the tree
     private void createDepartmentNodes() {
+        treeView.getRoot().getChildren().clear();
         for (Department department : departments) {
             TreeItem<DepartmentOrEmployee> departmentNode = findDepartmentNode(rootNode, department.getParentDepartment());
 
@@ -91,6 +90,8 @@ public class TreeViewSample extends Application {
                 departmentNode.getChildren().add(departmentLeaf);
             }
         }
+
+        createEmployeeNodes();
     }
 
     // Helper method to create employee nodes and add them to the tree

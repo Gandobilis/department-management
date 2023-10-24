@@ -74,8 +74,8 @@ public class TDepartments implements Table<Department> {
     public void create(Department department) {
         try (java.sql.Connection connection = Connection.getConnection()) {
             String query = department.getParentDepartment().getId() != -1
-                    ? "INSERT INTO departments (name, parent_department_id) VALUES (?, ?)"
-                    : "INSERT INTO departments (name) VALUES (?)";
+                    ? "INSERT INTO departments (department_name, parent_department_id) VALUES (?, ?)"
+                    : "INSERT INTO departments (department_name) VALUES (?)";
             try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
                 preparedStatement.setString(1, department.getName());
                 if (department.getParentDepartment().getId() != -1) {
