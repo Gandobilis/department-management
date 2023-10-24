@@ -284,6 +284,7 @@ public class TreeViewSample extends Application {
                 Employee newEmployee = new Employee(firstName, lastName, selectedDepartment);
                 // Save the new employee to your data source (e.g., TEmployees.getInstance().add(newEmployee))
                 TEmployees.getInstance().create(newEmployee);
+                employees = TEmployees.getInstance().findAll();
                 table.setItems(employees);
                 table.refresh();
 
