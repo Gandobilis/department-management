@@ -50,13 +50,12 @@ public class Employee {
         return department.get();
     }
 
+    public String getFullName() {
+        return getFirstName() + " " + getLastName();
+    }
+
     @Override
     public String toString() {
-        return "Employee{" +
-                "id=" + id +
-                ", firstName=" + firstName +
-                ", lastName=" + lastName +
-                ", department=" + department +
-                '}';
+        return getFullName();
     }
 }
