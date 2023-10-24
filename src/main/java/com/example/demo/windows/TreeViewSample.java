@@ -53,18 +53,18 @@ public class TreeViewSample extends Application {
 
         TreeView<DepartmentOrEmployee> treeView = new TreeView<>(rootNode);
 
-        ContextMenu employeeContextMenu = createEmployeeContextMenu();
-        ContextMenu departmentContextMenu = createDepartmentContextMenu();
+        MenuItem employeeContextMenu = createEmployeeContextMenu();
+        MenuItem departmentContextMenu = createDepartmentContextMenu();
+        final ContextMenu addMenu = new ContextMenu();
+        addMenu.getItems().addAll(employeeContextMenu, departmentContextMenu);
 
         // Set context menus for tree view nodes
         treeView.setContextMenu(null); // Disable default context menu
         treeView.setOnContextMenuRequested(event -> {
             TreeItem<DepartmentOrEmployee> selectedItem = treeView.getSelectionModel().getSelectedItem();
             if (selectedItem != null) {
-                if (selectedItem.getValue().isEmployee()) {
-                    treeView.setContextMenu(employeeContextMenu);
-                } else {
-                    treeView.setContextMenu(departmentContextMenu);
+                if (selectedItem.getValue().isDepartment()) {
+                    treeView.setContextMenu(addMenu);
                 }
             }
         });
@@ -232,21 +232,17 @@ public class TreeViewSample extends Application {
         Optional<Employee> result = dialog.showAndWait();
     }
 
-    private ContextMenu createEmployeeContextMenu() {
-        ContextMenu contextMenu = new ContextMenu();
+    private MenuItem createEmployeeContextMenu() {
         MenuItem addEmployeeItem = new MenuItem("Add Employee");
         addEmployeeItem.setOnAction(event -> openAddEmployeeDialog());
-        contextMenu.getItems().add(addEmployeeItem);
-        return contextMenu;
+        return addEmployeeItem;
     }
 
     // Helper method to create context menu for adding Department
-    private ContextMenu createDepartmentContextMenu() {
-        ContextMenu contextMenu = new ContextMenu();
+    private MenuItem createDepartmentContextMenu() {
         MenuItem addDepartmentItem = new MenuItem("Add Department");
         addDepartmentItem.setOnAction(event -> openAddDepartmentDialog());
-        contextMenu.getItems().add(addDepartmentItem);
-        return contextMenu;
+        return addDepartmentItem;
     }
 
     // Create and show dialog for adding a new Employee
@@ -287,8 +283,10 @@ public class TreeViewSample extends Application {
 
                 Employee newEmployee = new Employee(firstName, lastName, selectedDepartment);
                 // Save the new employee to your data source (e.g., TEmployees.getInstance().add(newEmployee))
-                employees = TEmployees.getInstance().findAll();
+                TEmployees.getInstance().create(newEmployee);
                 table.setItems(employees);
+                table.refresh();
+
                 return newEmployee;
             }
             return null;
@@ -331,8 +329,10 @@ public class TreeViewSample extends Application {
 
                 Department newDepartment = new Department(departmentName, parentDepartment);
                 // Save the new department to your data source (e.g., TDepartments.getInstance().add(newDepartment))
+                TDepartments.getInstance().create(newDepartment);
                 departments = TDepartments.getInstance().findAll();
-                createDepartmentNodes(); // Update the tree view
+                createDepartmentNodes();
+
                 return newDepartment;
             }
             return null;
