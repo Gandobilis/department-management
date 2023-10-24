@@ -136,7 +136,7 @@ public class TEmployees implements Table<Employee> {
     public void delete(Integer id) {
         try (java.sql.Connection connection = Connection.getConnection()) {
             String query = "DELETE FROM employees " +
-                    "WHERE id = ?";
+                    "WHERE employee_id = ?";
             try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
                 preparedStatement.setInt(1, id);
                 int affectedRows = preparedStatement.executeUpdate();

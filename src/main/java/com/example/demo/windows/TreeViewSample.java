@@ -6,18 +6,20 @@ import com.example.demo.models.Employee;
 import com.example.demo.tables.TDepartments;
 import com.example.demo.tables.TEmployees;
 import javafx.application.Application;
+import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.ObservableList;
 import javafx.scene.Scene;
-import javafx.scene.control.TreeItem;
-import javafx.scene.control.TreeView;
-import javafx.scene.layout.VBox;
-import javafx.scene.paint.Color;
+import javafx.scene.control.*;
+import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.layout.HBox;
 import javafx.stage.Stage;
+import javafx.util.Callback;
 
 public class TreeViewSample extends Application {
-    ObservableList<Department> departments = TDepartments.getInstance().findAll();
-    ObservableList<Employee> employees = TEmployees.getInstance().findAll();
-    TreeItem<DepartmentOrEmployee> rootNode = new TreeItem<>(new DepartmentOrEmployee(new Department("Departments")));
+    private final TableView<Employee> table = new TableView<>();
+    private final ObservableList<Department> departments = TDepartments.getInstance().findAll();
+    private ObservableList<Employee> employees = TEmployees.getInstance().findAll();
+    private final TreeItem<DepartmentOrEmployee> rootNode = new TreeItem<>(new DepartmentOrEmployee(new Department("Departments")));
 
     public static void main(String[] args) {
         Application.launch(args);
@@ -29,15 +31,31 @@ public class TreeViewSample extends Application {
         createDepartmentNodes();
         createEmployeeNodes();
 
-        // Set up the JavaFX scene
-        VBox box = new VBox();
-        Scene scene = new Scene(box, 400, 300);
-        scene.setFill(Color.LIGHTGRAY);
+        table.setEditable(true);
+        TableColumn<Employee, String> fName = createTableColumn("First Name", "firstName", 100);
+        TableColumn<Employee, String> lName = createTableColumn("Last Name", "lastName", 100);
+        TableColumn<Employee, String> deptName = createTableColumn("Department Name", null, 200);
+
+        deptName.setCellValueFactory(cellData -> {
+            Employee employee = cellData.getValue();
+            Department department = employee.getDepartment();
+            return new SimpleStringProperty(department != null ? department.getName() : "No Department");
+        });
+
+        TableColumn<Employee, Void> del = createDeleteColumn();
+        TableColumn<Employee, Void> edit = createEditColumn();
+
+        table.setItems(employees);
+        table.getColumns().addAll(fName, lName, deptName, edit, del);
 
         TreeView<DepartmentOrEmployee> treeView = new TreeView<>(rootNode);
 
-        box.getChildren().add(treeView);
+        // Set up the JavaFX scene
+        HBox box = new HBox();
+        box.getChildren().addAll(treeView, table);
+        Scene scene = new Scene(box, 1280, 720);
         stage.setScene(scene);
+        stage.setMaximized(true);
         stage.show();
     }
 
@@ -81,5 +99,76 @@ public class TreeViewSample extends Application {
             }
         }
         return null;
+    }
+
+    private TableColumn<Employee, String> createTableColumn(String text, String property, Integer width) {
+        TableColumn<Employee, String> column = new TableColumn<>(text);
+        column.setMinWidth(width);
+        column.setCellValueFactory(new PropertyValueFactory<>(property));
+        return column;
+    }
+
+    private TableColumn<Employee, Void> createDeleteColumn() {
+        TableColumn<Employee, Void> del = new TableColumn<>("Delete");
+        del.setMinWidth(50);
+
+        Callback<TableColumn<Employee, Void>, TableCell<Employee, Void>> cellFactory = p -> new TableCell<>() {
+            private final Button editButton = new Button("Delete");
+
+            {
+                editButton.setOnAction(event -> {
+                    Employee employee = getTableView().getItems().get(getIndex());
+                    TEmployees.getInstance().delete(employee.getId());
+                    employees = TEmployees.getInstance().findAll();
+                    table.setItems(employees);
+                    table.refresh();
+                });
+            }
+
+            @Override
+            protected void updateItem(Void item, boolean empty) {
+                super.updateItem(item, empty);
+                if (empty) {
+                    setGraphic(null);
+                } else {
+                    setGraphic(editButton);
+                }
+            }
+        };
+        del.setCellFactory(cellFactory);
+
+        return del;
+    }
+
+    private TableColumn<Employee, Void> createEditColumn() {
+        TableColumn<Employee, Void> edit = new TableColumn<>("Edit");
+        edit.setMinWidth(50);
+
+        Callback<TableColumn<Employee, Void>, TableCell<Employee, Void>> cellFactory = p -> new TableCell<>() {
+            private final Button editButton = new Button("Edit");
+
+            {
+                editButton.setOnAction(event -> {
+//                    Employee employee = getTableView().getItems().get(getIndex());
+//                    TEmployees.getInstance().delete(employee.getId());
+//                    employees = TEmployees.getInstance().findAll();
+//                    table.setItems(employees);
+//                    table.refresh();
+                });
+            }
+
+            @Override
+            protected void updateItem(Void item, boolean empty) {
+                super.updateItem(item, empty);
+                if (empty) {
+                    setGraphic(null);
+                } else {
+                    setGraphic(editButton);
+                }
+            }
+        };
+        edit.setCellFactory(cellFactory);
+
+        return edit;
     }
 }
