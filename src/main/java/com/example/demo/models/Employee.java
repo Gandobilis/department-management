@@ -49,4 +49,13 @@ public class Employee {
     public Department getDepartment() {
         return department.get();
     }
+
+    public String getFullName() {
+        return getFirstName() + " " + getLastName();
+    }
+
+    @Override
+    public String toString() {
+        return getFullName();
+    }
 }
